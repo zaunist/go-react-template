@@ -1,0 +1,197 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Go 后端检查和测试
+  go-lint-and-test:
+    name: Go Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download Go dependencies
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: --timeout=5m
+
+      - name: Run Go tests
+        run: |
+          go test -v -race -coverprofile=coverage.out ./...
+
+      - name: Build Go binary
+        run: |
+          go build -o server main.go
+
+  # 前端检查和测试
+  frontend-lint-and-test:
+    name: Frontend Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            web/node_modules
+            ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('web/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install frontend dependencies
+        run: |
+          cd web
+          bun install
+
+      - name: Run frontend lint
+        run: |
+          cd web
+          bun run lint
+
+      - name: Build frontend
+        run: |
+          cd web
+          bun run build
+
+  # 完整构建测试
+  full-build:
+    name: Full Build Test
+    runs-on: ubuntu-latest
+    needs: [go-lint-and-test, frontend-lint-and-test]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+            web/node_modules
+            ~/.bun/install/cache
+          key: ${{ runner.os }}-full-${{ hashFiles('**/go.sum', 'web/bun.lockb') }}
+
+      - name: Install dependencies
+        run: |
+          go mod download
+          cd web && bun install
+
+      - name: Run full build script
+        run: |
+          chmod +x scripts/build.sh
+          ./scripts/build.sh
+
+      - name: Test server binary
+        run: |
+          if [ ! -f "server" ]; then
+            echo "Server binary not found!"
+            exit 1
+          fi
+          file server
+          ls -la server
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-binary
+          path: |
+            server
+            static/
+          retention-days: 7
+
+  # Docker 构建测试
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    needs: [full-build]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Build project
+        run: |
+          go mod download
+          cd web && bun install
+          chmod +x scripts/build.sh
+          ./scripts/build.sh
+
+      - name: Build Docker image
+        run: |
+          docker build -t go-react-template:${{ github.sha }} .
+
+      - name: Test Docker image
+        run: |
+          # 启动容器
+          docker run -d --name test-container -p 8080:8080 go-react-template:${{ github.sha }}
+
+          # 等待服务启动
+          sleep 10
+
+          # 测试健康检查
+          docker exec test-container wget --quiet --tries=1 --spider http://localhost:8080/health || exit 1
+
+          # 清理
+          docker stop test-container
+          docker rm test-container

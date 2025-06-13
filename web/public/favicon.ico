@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <linearGradient id="goGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ADD8"/>
+      <stop offset="100%" stop-color="#007D9C"/>
+    </linearGradient>
+    <linearGradient id="reactGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#61DAFB"/>
+      <stop offset="100%" stop-color="#21A0C4"/>
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#EE5A52"/>
+    </linearGradient>
+  </defs>
+  
+  <circle cx="8" cy="8" r="7.5" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
+  <path d="M3 6 L6 4 L6 8 Z" fill="url(#goGrad)" opacity="0.9"/>
+  <circle cx="4" cy="6" r="0.7" fill="#ffffff"/>
+  <ellipse cx="12" cy="8" rx="2" ry="1" fill="none" stroke="url(#reactGrad)" stroke-width="0.7" opacity="0.8"/>
+  <ellipse cx="12" cy="8" rx="2" ry="1" fill="none" stroke="url(#reactGrad)" stroke-width="0.7" opacity="0.8" transform="rotate(60 12 8)"/>
+  <ellipse cx="12" cy="8" rx="2" ry="1" fill="none" stroke="url(#reactGrad)" stroke-width="0.7" opacity="0.8" transform="rotate(-60 12 8)"/>
+  <circle cx="12" cy="8" r="0.7" fill="url(#reactGrad)"/>
+  <circle cx="8" cy="8" r="1" fill="url(#centerGrad)"/>
+  <line x1="6" y1="6" x2="7" y2="7" stroke="url(#centerGrad)" stroke-width="1" opacity="0.7"/>
+  <line x1="9" y1="8" x2="10" y2="8" stroke="url(#centerGrad)" stroke-width="1" opacity="0.7"/>
+</svg>

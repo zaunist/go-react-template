@@ -121,15 +121,11 @@ make lint-go
 
 # 只检查前端代码
 make lint-web
-
-# 自动修复可修复的问题
-make fix
 ```
 
 ### 配置说明
 
 - **配置文件**: `.golangci.yml`
-- **VS Code 集成**: `.vscode/settings.json`
 - **CI/CD 集成**: `.github/workflows/ci.yml`
 - **详细文档**: [docs/golangci-lint.md](docs/golangci-lint.md)
 
@@ -190,10 +186,6 @@ vim .env
 │   ├── package.json      # 前端依赖
 │   └── vite.config.ts    # Vite 配置
 │
-├── .vscode/              # VS Code 配置
-│   ├── settings.json     # 编辑器设置
-│   └── tasks.json        # 任务配置
-│
 ├── .github/              # GitHub 配置
 │   └── workflows/        # CI/CD 流水线
 │       └── ci.yml        # 主要 CI 配置
@@ -238,34 +230,6 @@ make docker-build   # 构建 Docker 镜像
 make docker-run     # 运行 Docker 容器
 make docker-up      # 使用 docker-compose 启动
 make docker-down    # 使用 docker-compose 停止
-```
-
-### VS Code 集成
-
-项目包含完整的 VS Code 配置：
-
-- **自动格式化** - 保存时自动格式化代码
-- **代码检查** - 实时显示 golangci-lint 结果
-- **任务集成** - 快捷运行构建、测试、检查任务
-- **调试配置** - Go 和前端调试支持
-
-### Git Hooks
-
-可以设置 pre-commit hook 进行代码检查：
-
-```bash
-# 创建 pre-commit hook
-cat > .git/hooks/pre-commit << 'EOF'
-#!/bin/bash
-echo "Running code quality checks..."
-make lint
-if [ $? -ne 0 ]; then
-    echo "Code quality checks failed. Commit aborted."
-    exit 1
-fi
-EOF
-
-chmod +x .git/hooks/pre-commit
 ```
 
 ## 🧪 测试

@@ -366,6 +366,28 @@ export const Component: React.FC<ComponentProps> = ({
 export default Component;
 ```
 
+#### 5.1.5 组件设计风格
+
+- 整体风格：采用 linear 设计风格：这是一种在大面积暗色背景下，使用渐变、模糊、动态流光、极细描边、微噪点、外发光以及庄重的无衬线字体，外加流畅克制的微动效来组织和修饰界面元素的网页设计风格。
+
+- 导航栏：
+  - 采用扁平化设计风格：按钮的背景颜色和文字颜色之间的对比度要高，同时按钮的圆角要小，以避免视觉上的干扰。
+  - 采用动态效果：按钮的背景颜色要随着鼠标悬停而变化，文字颜色要随着鼠标悬停而变化，按钮的圆角要随着鼠标悬停而变化，以避免视觉上的干扰。
+- 按钮：
+  - 采用扁平化设计风格：按钮的背景颜色和文字颜色之间的对比度要高，同时按钮的圆角要小，以避免视觉上的干扰。
+  - 采用动态效果：按钮的背景颜色要随着鼠标悬停而变化，文字颜色要随着鼠标悬停而变化，按钮的圆角要随着鼠标悬停而变化，以避免视觉上的干扰。
+- 表单元素：
+  - 输入框：
+    - 采用扁平化设计风格：输入框的背景颜色和文字颜色之间的对比度要高，同时输入框的圆角要小，以避免视觉上的干扰。
+    - 输入框下方的下划线：
+      - 采用动态效果：下划线的颜色要与输入框的文字颜色保持一致，下划线的宽度要与输入框的文字宽度保持一致，下划线的位置要与输入框的文字位置保持一致。
+  - 下拉选择框：
+    - 采用扁平化设计风格：下拉选择框的背景颜色和文字颜色之间的对比度要高，同时下拉选择框的圆角要小，以避免视觉上的干扰。
+  - 复选框：
+    - 采用扁平化设计风格：复选框的背景颜色和文字颜色之间的对比度要高，同时复选框的圆角要小，以避免视觉上的干扰。
+- 页脚：
+  - 采用扁平化设计风格：页脚的背景颜色和文字颜色之间的对比度要高，同时页脚的圆角要小，以避免视觉上的干扰。
+
 ### 5.2 状态管理规范 (Zustand)
 
 #### 5.2.1 Store 设计原则
@@ -564,9 +586,377 @@ export const getButtonClasses = (variant: keyof typeof buttonVariants) => {
 };
 ```
 
-### 5.5 API 调用规范
+### 5.5 移动端适配规范 📱
 
-#### 5.5.1 API 客户端
+#### 5.5.1 响应式设计原则
+
+- **移动优先 (Mobile First)**：从最小屏幕开始设计，逐步增强到大屏幕
+- **断点策略**：使用 TailwindCSS 标准断点
+  - `xs`: < 640px (手机竖屏)
+  - `sm`: ≥ 640px (手机横屏/小平板)
+  - `md`: ≥ 768px (平板)
+  - `lg`: ≥ 1024px (桌面)
+  - `xl`: ≥ 1280px (大桌面)
+  - `2xl`: ≥ 1536px (超大桌面)
+
+```typescript
+// 响应式布局示例
+<div className="
+  // 移动端：单列布局，小间距
+  flex flex-col gap-4 p-4
+  // 平板：两列布局，中等间距
+  md:grid md:grid-cols-2 md:gap-6 md:p-6
+  // 桌面：三列布局，大间距
+  lg:grid-cols-3 lg:gap-8 lg:p-8
+">
+  {items.map(item => (
+    <Card key={item.id} className="
+      // 移动端：全宽卡片
+      w-full
+      // 桌面：固定最大宽度
+      lg:max-w-sm
+    ">
+      {item.content}
+    </Card>
+  ))}
+</div>
+```
+
+#### 5.5.2 触摸交互优化
+
+- **触摸目标尺寸**：最小 44px × 44px (iOS) 或 48dp × 48dp (Android)
+- **触摸反馈**：提供清晰的视觉和触觉反馈
+- **手势支持**：支持常见手势操作
+
+```typescript
+// 触摸友好的按钮组件
+export const TouchButton: React.FC<TouchButtonProps> = ({
+  children,
+  variant = "primary",
+  size = "default",
+  ...props
+}) => {
+  const sizeClasses = {
+    small: "min-h-[44px] px-4 py-2 text-sm",
+    default: "min-h-[48px] px-6 py-3 text-base",
+    large: "min-h-[56px] px-8 py-4 text-lg",
+  };
+
+  return (
+    <button
+      className={cn(
+        // 基础样式
+        "relative overflow-hidden rounded-lg font-medium transition-all duration-200",
+        // 触摸反馈
+        "active:scale-95 active:brightness-90",
+        // 焦点样式
+        "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+        // 尺寸
+        sizeClasses[size],
+        // 变体样式
+        buttonVariants[variant]
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+#### 5.5.3 移动端导航设计
+
+- **底部导航栏**：主要导航使用底部标签栏
+- **汉堡菜单**：次要功能使用侧边抽屉
+- **面包屑导航**：深层页面提供返回路径
+
+```typescript
+// 移动端底部导航组件
+export const MobileBottomNav: React.FC = () => {
+  const location = useLocation();
+  
+  const navItems = [
+    { path: "/", icon: HomeIcon, label: "首页" },
+    { path: "/explore", icon: SearchIcon, label: "发现" },
+    { path: "/notifications", icon: BellIcon, label: "通知" },
+    { path: "/profile", icon: UserIcon, label: "我的" },
+  ];
+
+  return (
+    <nav className="
+      // 固定在底部
+      fixed bottom-0 left-0 right-0 z-50
+      // 背景和边框
+      bg-white/95 backdrop-blur-sm border-t border-gray-200
+      // 安全区域适配
+      pb-safe
+      // 桌面端隐藏
+      lg:hidden
+    ">
+      <div className="flex items-center justify-around px-2 py-1">
+        {navItems.map(({ path, icon: Icon, label }) => {
+          const isActive = location.pathname === path;
+          return (
+            <Link
+              key={path}
+              to={path}
+              className={cn(
+                "flex flex-col items-center justify-center",
+                "min-h-[56px] px-3 py-1 rounded-lg",
+                "transition-colors duration-200",
+                isActive
+                  ? "text-blue-600 bg-blue-50"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              )}
+            >
+              <Icon className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">{label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+};
+```
+
+#### 5.5.4 移动端表单优化
+
+- **输入类型优化**：使用正确的 input type 触发合适的键盘
+- **标签和占位符**：提供清晰的输入指导
+- **验证反馈**：实时验证和错误提示
+
+```typescript
+// 移动端优化的输入组件
+export const MobileInput: React.FC<MobileInputProps> = ({
+  label,
+  type = "text",
+  error,
+  ...props
+}) => {
+  return (
+    <div className="space-y-2">
+      {label && (
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+      <input
+        type={type}
+        className={cn(
+          // 基础样式
+          "w-full px-4 py-3 text-base rounded-lg border",
+          // 移动端优化：更大的触摸区域
+          "min-h-[48px]",
+          // 焦点样式
+          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+          // 错误状态
+          error
+            ? "border-red-300 bg-red-50"
+            : "border-gray-300 bg-white",
+          // 禁用缩放（防止iOS Safari缩放）
+          "text-[16px] sm:text-sm"
+        )}
+        {...props}
+      />
+      {error && (
+        <p className="text-sm text-red-600 flex items-center gap-1">
+          <ExclamationCircleIcon className="w-4 h-4" />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
+```
+
+#### 5.5.5 移动端性能优化
+
+- **图片优化**：使用 WebP 格式，实现懒加载
+- **代码分割**：按路由和功能分割代码
+- **预加载策略**：预加载关键资源
+- **缓存策略**：合理使用浏览器缓存
+
+```typescript
+// 移动端图片组件
+export const MobileImage: React.FC<MobileImageProps> = ({
+  src,
+  alt,
+  className,
+  priority = false,
+  ...props
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // 懒加载实现
+  useEffect(() => {
+    if (!priority && imgRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            const img = entry.target as HTMLImageElement;
+            img.src = src;
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(imgRef.current);
+      return () => observer.disconnect();
+    }
+  }, [src, priority]);
+
+  return (
+    <div className={cn("relative overflow-hidden", className)}>
+      <img
+        ref={imgRef}
+        src={priority ? src : undefined}
+        alt={alt}
+        className={cn(
+          "w-full h-full object-cover transition-opacity duration-300",
+          isLoaded ? "opacity-100" : "opacity-0"
+        )}
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setError(true)}
+        loading={priority ? "eager" : "lazy"}
+        {...props}
+      />
+      {!isLoaded && !error && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+      )}
+      {error && (
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+          <PhotoIcon className="w-8 h-8 text-gray-400" />
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+#### 5.5.6 移动端手势支持
+
+- **滑动手势**：支持左右滑动导航
+- **下拉刷新**：实现下拉刷新功能
+- **无限滚动**：长列表使用无限滚动
+
+```typescript
+// 滑动手势 Hook
+export const useSwipeGesture = ({
+  onSwipeLeft,
+  onSwipeRight,
+  threshold = 50,
+}: SwipeGestureOptions) => {
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const onTouchStart = (e: TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > threshold;
+    const isRightSwipe = distance < -threshold;
+
+    if (isLeftSwipe && onSwipeLeft) {
+      onSwipeLeft();
+    }
+    if (isRightSwipe && onSwipeRight) {
+      onSwipeRight();
+    }
+  };
+
+  return {
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+  };
+};
+```
+
+#### 5.5.7 移动端安全区域适配
+
+- **安全区域**：适配 iPhone 刘海屏和底部指示器
+- **状态栏**：考虑状态栏高度
+- **虚拟键盘**：处理虚拟键盘弹出时的布局调整
+
+```css
+/* 安全区域 CSS 变量 */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
+}
+
+/* TailwindCSS 自定义类 */
+@layer utilities {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pl-safe {
+    padding-left: env(safe-area-inset-left);
+  }
+  .pr-safe {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+```
+
+#### 5.5.8 移动端测试规范
+
+- **设备测试**：在真实设备上测试
+- **网络测试**：测试不同网络条件下的表现
+- **触摸测试**：验证触摸交互的准确性
+- **性能测试**：监控移动端性能指标
+
+```typescript
+// 移动端检测工具
+export const useMobileDetection = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+
+  useEffect(() => {
+    const checkDevice = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+      setOrientation(height > width ? 'portrait' : 'landscape');
+    };
+
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    window.addEventListener('orientationchange', checkDevice);
+
+    return () => {
+      window.removeEventListener('resize', checkDevice);
+      window.removeEventListener('orientationchange', checkDevice);
+    };
+  }, []);
+
+  return { isMobile, isTablet, orientation };
+};
+```
+
+### 5.6 API 调用规范
+
+#### 5.6.1 API 客户端
 
 ```typescript
 // api/client.ts
@@ -600,7 +990,7 @@ apiClient.interceptors.response.use(
 );
 ```
 
-#### 5.5.2 API 服务层
+#### 5.6.2 API 服务层
 
 ```typescript
 // api/userApi.ts
@@ -617,23 +1007,23 @@ export const userApi = {
 };
 ```
 
-### 5.6 性能优化
+### 5.7 性能优化
 
-#### 5.6.1 代码分割
+#### 5.7.1 代码分割
 
 - **路由级分割**：使用 `React.lazy` 分割页面组件
 - **组件级分割**：大型组件使用动态导入
 - **第三方库分割**：大型依赖库单独打包
 
-#### 5.6.2 渲染优化
+#### 5.7.2 渲染优化
 
 - **使用 React.memo**：防止不必要的重渲染
 - **使用 useMemo/useCallback**：缓存计算结果和函数
 - **虚拟滚动**：长列表使用虚拟滚动
 
-### 5.7 类型定义规范
+### 5.8 类型定义规范
 
-#### 5.7.1 接口定义
+#### 5.8.1 接口定义
 
 ```typescript
 // types/user.ts
@@ -658,15 +1048,15 @@ export interface UpdateUserRequest {
 }
 ```
 
-### 5.8 测试规范
+### 5.9 测试规范
 
-#### 5.8.1 单元测试
+#### 5.9.1 单元测试
 
 - **组件测试**：测试组件的渲染和交互
 - **Hook 测试**：测试自定义 Hook 的逻辑
 - **工具函数测试**：测试纯函数的输入输出
 
-### 5.9 注释规范
+### 5.10 注释规范
 
 - **组件注释**：复杂组件需要说明其用途和主要功能
 - **业务逻辑注释**：对于复杂的业务逻辑，添加必要的注释说明

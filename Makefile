@@ -22,7 +22,7 @@ install: ## 安装项目依赖
 	go mod download
 	go mod tidy
 	@echo "🔧 安装前端依赖..."
-	cd web && bun install --no-cache
+	cd web && bun install --no-cache --registry https://registry.npmjs.org/
 	@echo "✅ 依赖安装完成"
 
 # 代码检查

@@ -1,6 +1,7 @@
 // HTTP客户端配置，基于axios
 import axios from 'axios'
 import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios'
+import { useLanguageStore } from '../store/languageStore'
 
 // API基础URL
 const API_BASE_URL = 'http://localhost:1323/api/v1'
@@ -24,11 +25,15 @@ const client: AxiosInstance = axios.create({
 // 请求拦截器
 client.interceptors.request.use(
   (config) => {
+    // 设置语言请求头
+    const { currentLanguage } = useLanguageStore.getState()
+    config.headers['X-Language'] = currentLanguage
+    
     // 可以在这里添加认证token等
-    // const token = localStorage.getItem('token')
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`
-    // }
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => {

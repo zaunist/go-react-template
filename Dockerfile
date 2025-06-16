@@ -1,47 +1,70 @@
-# 使用最小的 Alpine 镜像作为基础镜像
-FROM alpine:latest
-
-# 安装必要的运行时依赖
-RUN apk --no-cache add ca-certificates tzdata
+# 第一阶段：前端构建阶段
+FROM oven/bun:latest AS frontend-builder
 
 # 设置工作目录
 WORKDIR /app
 
-# 创建非 root 用户
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+# 复制前端项目文件
+COPY web/package.json web/bun.lock* ./
 
-# 复制二进制程序
-COPY server /app/server
+# 安装前端依赖
+RUN bun install
 
-# 复制静态文件目录（如果存在）
-COPY static /app/static
+# 复制前端源码
+COPY web/ ./
 
-# 复制配置文件示例
-COPY .env.example /app/.env.example
+# 构建前端
+RUN bun run build
+
+# 第二阶段：后端构建阶段
+FROM golang:1.24-alpine AS backend-builder
+
+# 安装构建依赖
+RUN apk add --no-cache git make bash
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制 Go 模块文件
+COPY go.mod go.sum ./
+
+# 下载 Go 依赖
+RUN go mod download
+
+# 复制后端源码
+COPY . .
+
+# 从前端构建阶段复制构建结果
+COPY --from=frontend-builder /app/dist ./web/dist
+
+# 复制前端静态文件到后端静态目录
+RUN mkdir -p static && cp -r web/dist/* static/
+
+# 构建后端
+RUN go build -o server main.go
+
+# 第三阶段：运行阶段
+FROM alpine:latest
+
+# 安装必要的运行时依赖
+RUN apk --no-cache add ca-certificates tzdata wget
+
+# 设置工作目录
+WORKDIR /app
+
+# 从后端构建阶段复制二进制程序和静态文件
+COPY --from=backend-builder /app/server /app/server
+COPY --from=backend-builder /app/static /app/static
 
 # 设置二进制程序的执行权限
 RUN chmod +x /app/server
 
-# 更改文件所有者
-RUN chown -R appuser:appgroup /app
-
-# 切换到非 root 用户
-USER appuser
-
-# 设置默认环境变量
-ENV SERVER_HOST=0.0.0.0
-ENV SERVER_PORT=8080
-ENV DATABASE_DRIVER=sqlite
-ENV DATABASE_DSN=./data.db
-ENV JWT_SECRET=your-jwt-secret-key
-
 # 暴露端口
-EXPOSE 8080
+EXPOSE 1323
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:1323/api/v1/health || exit 1
 
 # 启动应用
 CMD ["/app/server"]

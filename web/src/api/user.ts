@@ -27,7 +27,7 @@ export const userApi = {
   // 用户注册
   register: async (data: RegisterRequest): Promise<ApiResponse<User>> => {
     const response = await client.post<ApiResponse<User>>(
-      "/auth/register",
+      "/v1/auth/register",
       data
     );
     return response.data;
@@ -35,13 +35,13 @@ export const userApi = {
 
   // 用户登录
   login: async (data: LoginRequest): Promise<ApiResponse<User>> => {
-    const response = await client.post<ApiResponse<User>>("/auth/login", data);
+    const response = await client.post<ApiResponse<User>>("/v1/auth/login", data);
     return response.data;
   },
 
   // 获取用户信息
   getProfile: async (id: number): Promise<ApiResponse<User>> => {
-    const response = await client.get<ApiResponse<User>>(`/user/profile/${id}`);
+    const response = await client.get<ApiResponse<User>>(`/v1/user/profile/${id}`);
     return response.data;
   },
 };

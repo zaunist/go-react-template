@@ -4,7 +4,7 @@ import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios'
 import { useLanguageStore } from '../store/languageStore'
 
 // API基础URL
-const API_BASE_URL = 'http://localhost:1323/api/v1'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 // 统一的API响应格式
 export interface ApiResponse<T = any> {

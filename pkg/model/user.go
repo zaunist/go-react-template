@@ -9,14 +9,26 @@ import (
 
 // User 用户模型.
 type User struct {
-	ID        uint           `json:"id" gorm:"primarykey"`
+	ID        string         `json:"id" gorm:"type:char(36);primarykey"`
 	Username  string         `json:"username" gorm:"uniqueIndex;not null;size:50" validate:"required,min=3,max=50"`
 	Email     string         `json:"email" gorm:"uniqueIndex;not null;size:100" validate:"required,email"`
-	Password  string         `json:"-" gorm:"not null;size:255" validate:"required,min=6"`
+	Password  string         `json:"-" gorm:"size:255" validate:"omitempty,min=6"` // Google登录用户可能没有密码
+	AvatarURL string         `json:"avatar_url" gorm:"size:500;comment:用户头像URL"`
+	GoogleID  string         `json:"-" gorm:"uniqueIndex;size:100;comment:Google用户ID"`
+	LoginType LoginType      `json:"login_type" gorm:"type:varchar(20);not null;default:'local';comment:登录类型"`
+	Bio       string         `json:"bio" gorm:"type:text"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
+
+// LoginType 登录类型枚举
+type LoginType string
+
+const (
+	LoginTypeLocal  LoginType = "local"  // 本地注册登录
+	LoginTypeGoogle LoginType = "google" // Google第三方登录
+)
 
 // TableName 指定表名.
 func (User) TableName() string {
@@ -38,16 +50,40 @@ type UserLoginRequest struct {
 
 // UserResponse 用户响应结构（不包含密码）.
 type UserResponse struct {
-	ID       uint   `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID        string    `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	AvatarURL string    `json:"avatar_url"`
+	LoginType LoginType `json:"login_type"`
+	Bio       string    `json:"bio"`
+}
+
+// UserChangePasswordRequest 用户更改密码请求结构.
+type UserChangePasswordRequest struct {
+	OldPassword string `json:"old_password" validate:"required"`
+	NewPassword string `json:"new_password" validate:"required,min=6"`
+}
+
+// GoogleLoginRequest Google登录请求结构.
+type GoogleLoginRequest struct {
+	IDToken string `json:"id_token" validate:"required"`
 }
 
 // ToResponse 将User转换为UserResponse.
 func (u *User) ToResponse() UserResponse {
 	return UserResponse{
-		ID:       u.ID,
-		Username: u.Username,
-		Email:    u.Email,
+		ID:        u.ID,
+		Username:  u.Username,
+		Email:     u.Email,
+		AvatarURL: u.AvatarURL,
+		LoginType: u.LoginType,
+		Bio:       u.Bio,
 	}
+}
+
+// UserUpdateProfileRequest 用户更新个人资料请求结构.
+type UserUpdateProfileRequest struct {
+	Username string `json:"username" validate:"omitempty,min=3,max=50"`
+	Email    string `json:"email" validate:"omitempty,email"`
+	Bio      string `json:"bio" validate:"omitempty,max=500"`
 }

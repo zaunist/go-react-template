@@ -1,5 +1,3 @@
-# Go + React 全栈模板项目开发规约 (Project Rules)
-
 ## 1. 核心原则 ✨
 
 ### 1.1 设计哲学
@@ -14,7 +12,6 @@
 
 - **一致性优于个性**：团队内保持代码风格、命名规范、文件结构的一致性。
 - **可读性优于简洁性**：代码应该易于理解和维护，而不是追求极致的简洁。
-- **测试驱动开发**：重要的业务逻辑必须有对应的单元测试。
 - **渐进式重构**：持续改进代码质量，但避免大规模重写。
 
 ## 2. 技术栈 (Tech Stack) 🛠️
@@ -24,7 +21,7 @@
 - **语言**: Go 1.24+
 - **Web 框架**: Echo v4
 - **ORM**: Gorm
-- **数据库**: SQLite
+- **数据库**: SQLite(也可能是Postgres或者MySQL)
 - **依赖管理**: Go Modules
 
 ### 前端 (Frontend)
@@ -304,7 +301,6 @@ func (h *UserHandler) Register(c echo.Context) error {
 
 - **单一职责**：每个组件只负责一个功能或展示一个 UI 片段
 - **可复用性**：通用组件应该高度可配置和可复用
-- **可测试性**：组件应该易于单元测试
 - **可访问性**：遵循 WCAG 无障碍访问标准
 
 #### 5.1.3 组件命名规范
@@ -374,13 +370,13 @@ export default Component;
   - 文字颜色：text-white
   - 字体：font-sans
   - 动态效果：hover:bg-gradient-to-r from-gray-900 via-black to-gray-950
+  - 禁止使用蓝紫色渐变
 
 - 导航栏：
   - 采用扁平化设计风格：按钮的背景颜色和文字颜色之间的对比度要高，同时按钮的圆角要小，以避免视觉上的干扰。
   - 采用动态效果：按钮的背景颜色要随着鼠标悬停而变化，文字颜色要随着鼠标悬停而变化，按钮的圆角要随着鼠标悬停而变化，以避免视觉上的干扰。
 - 按钮：
   - 采用扁平化设计风格：按钮的背景颜色和文字颜色之间的对比度要高，同时按钮的圆角要小，以避免视觉上的干扰。
-  - 采用动态效果：按钮的背景颜色要随着鼠标悬停而变化，文字颜色要随着鼠标悬停而变化，按钮的圆角要随着鼠标悬停而变化，以避免视觉上的干扰。
 - 表单元素：
   - 输入框：
     - 采用扁平化设计风格：输入框的背景颜色和文字颜色之间的对比度要高，同时输入框的圆角要小，以避免视觉上的干扰。
@@ -921,54 +917,16 @@ export const useSwipeGesture = ({
 }
 ```
 
-#### 5.5.8 移动端测试规范
-
-- **设备测试**：在真实设备上测试
-- **网络测试**：测试不同网络条件下的表现
-- **触摸测试**：验证触摸交互的准确性
-- **性能测试**：监控移动端性能指标
-
-```typescript
-// 移动端检测工具
-export const useMobileDetection = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
-
-  useEffect(() => {
-    const checkDevice = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      
-      setIsMobile(width < 768);
-      setIsTablet(width >= 768 && width < 1024);
-      setOrientation(height > width ? 'portrait' : 'landscape');
-    };
-
-    checkDevice();
-    window.addEventListener('resize', checkDevice);
-    window.addEventListener('orientationchange', checkDevice);
-
-    return () => {
-      window.removeEventListener('resize', checkDevice);
-      window.removeEventListener('orientationchange', checkDevice);
-    };
-  }, []);
-
-  return { isMobile, isTablet, orientation };
-};
-```
-
 ### 5.6 API 调用规范
 
 #### 5.6.1 API 客户端
 
 ```typescript
-// api/client.ts
+// lib/client.ts
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
   timeout: 10000,
 });
 
@@ -998,17 +956,17 @@ apiClient.interceptors.response.use(
 #### 5.6.2 API 服务层
 
 ```typescript
-// api/userApi.ts
+// api/user.ts
 export const userApi = {
-  getUser: (id: string): Promise<User> => apiClient.get(`/users/${id}`),
+  getUser: (id: string): Promise<User> => apiClient.get(`/v1/users/${id}`),
 
   createUser: (userData: CreateUserRequest): Promise<User> =>
-    apiClient.post("/users", userData),
+    apiClient.post("/v1/users", userData),
 
   updateUser: (id: string, userData: UpdateUserRequest): Promise<User> =>
-    apiClient.put(`/users/${id}`, userData),
+    apiClient.put(`/v1/users/${id}`, userData),
 
-  deleteUser: (id: string): Promise<void> => apiClient.delete(`/users/${id}`),
+  deleteUser: (id: string): Promise<void> => apiClient.delete(`/v1/users/${id}`),
 };
 ```
 
@@ -1031,15 +989,7 @@ export const userApi = {
 #### 5.8.1 接口定义
 
 ```typescript
-// types/user.ts
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// api/user.ts
 
 export interface CreateUserRequest {
   email: string;
@@ -1053,15 +1003,22 @@ export interface UpdateUserRequest {
 }
 ```
 
-### 5.9 测试规范
 
-#### 5.9.1 单元测试
+#### 5.8.1 类型定义
 
-- **组件测试**：测试组件的渲染和交互
-- **Hook 测试**：测试自定义 Hook 的逻辑
-- **工具函数测试**：测试纯函数的输入输出
+```typescript
+// types/user.d.ts
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
 
-### 5.10 注释规范
+### 5.9 注释规范
 
 - **组件注释**：复杂组件需要说明其用途和主要功能
 - **业务逻辑注释**：对于复杂的业务逻辑，添加必要的注释说明
@@ -1089,113 +1046,7 @@ export interface UpdateUserRequest {
 - **ESLint**: 代码质量检查
 - **Prettier**: 代码格式化
 
-### 6.2 Git 工作流
 
-#### 6.2.1 分支策略
+## 7. 项目特定规约
 
-- **main**: 主分支，保持稳定可发布状态
-- **develop**: 开发分支，集成最新功能
-- **feature/\***: 功能分支，开发新功能
-- **hotfix/\***: 热修复分支，紧急修复生产问题
-
-#### 6.2.2 提交规范
-
-```bash
-# 提交格式
-<type>(<scope>): <subject>
-
-# 类型说明
-feat: 新功能
-fix: 修复 bug
-docs: 文档更新
-style: 代码格式调整
-refactor: 代码重构
-test: 测试相关
-chore: 构建过程或辅助工具的变动
-
-# 示例
-feat(user): add user registration API
-fix(auth): resolve JWT token validation issue
-docs(readme): update installation instructions
-```
-
-## 7. 部署和运维 🚀
-
-### 7.1 Docker 部署
-
-#### 7.1.1 构建镜像
-
-```bash
-# 构建完整应用镜像（包含前端静态文件的单一二进制）
-# 使用 Makefile 构建项目
-make build
-
-# 构建 Docker 镜像
-docker build -t go-react-app .
-
-# 直接运行容器
-docker run -p 8080:8080 go-react-app
-
-# 或使用 Makefile 的 Docker 命令
-make docker-build
-make docker-run
-
-# 或使用 docker-compose 启动（推荐用于生产环境）
-make docker-compose-up
-```
-
-#### 7.1.2 环境变量
-
-```bash
-# .env 文件示例
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=myapp
-DB_USER=postgres
-DB_PASSWORD=password
-JWT_SECRET=your-secret-key
-PORT=8080
-```
-
-### 7.2 生产环境配置
-
-#### 7.2.1 安全配置
-
-- **HTTPS**: 使用 SSL/TLS 证书
-- **CORS**: 配置正确的跨域策略
-- **Rate Limiting**: 实现请求频率限制
-- **Input Validation**: 严格的输入验证
-- **Error Handling**: 不暴露敏感错误信息
-
-#### 7.2.2 性能优化
-
-- **数据库连接池**: 合理配置连接池大小
-- **缓存策略**: Redis 缓存热点数据
-- **CDN**: 静态资源使用 CDN
-- **Gzip 压缩**: 启用响应压缩
-- **监控告警**: 设置性能监控和告警
-
-## 📚 参考资源
-
-### 官方文档
-
-- [Go 官方文档](https://golang.org/doc/)
-- [Echo 框架文档](https://echo.labstack.com/)
-- [GORM 文档](https://gorm.io/docs/)
-- [React 官方文档](https://react.dev/)
-- [TypeScript 文档](https://www.typescriptlang.org/docs/)
-- [Tailwind CSS 文档](https://tailwindcss.com/docs)
-- [Zustand 文档](https://zustand-demo.pmnd.rs/)
-
-### 工具文档
-
-- [Air 热重载工具](./air.md)
-- [golangci-lint 配置](./golangci-lint.md)
-- [Docker 部署指南](./docker.md)
-- [配置管理说明](./configuration.md)
-
----
-
-**最后更新**: 2024 年 12 月
-**维护者**: 项目团队
-**版本**: v1.0.0
+记住，代码是写给人看的，只是机器恰好可以运行而已！

@@ -40,7 +40,6 @@
 - 🚀 **热重载** - 开发时自动重载
 - 📋 **Makefile** - 统一的项目管理
 - 🔄 **GitHub Actions** - CI/CD 流水线
-- 💻 **VS Code** - 完整的 IDE 配置
 
 ## 🚀 快速开始
 
@@ -163,37 +162,6 @@ vim .env
 | `JWT_SECRET`     | `your-secret-key` | JWT 签名密钥     |
 | `LOG_LEVEL`      | `info`            | 日志级别         |
 
-## 📁 项目结构
-
-```
-.
-├── main.go                 # 后端入口文件
-├── go.mod                  # Go 模块文件
-├── .golangci.yml          # golangci-lint 配置
-├── Makefile               # 项目管理命令
-├── Dockerfile             # Docker 配置
-├── docker-compose.yml     # Docker Compose 配置
-├── .env.example           # 环境变量模板
-├── .gitignore             # Git 忽略文件
-│
-├── scripts/               # 构建脚本
-│   ├── build.sh          # 完整构建脚本
-│   └── lint.sh           # 代码检查脚本
-│
-├── web/                   # 前端项目
-│   ├── src/              # 源代码
-│   ├── public/           # 静态资源
-│   ├── package.json      # 前端依赖
-│   └── vite.config.ts    # Vite 配置
-│
-├── .github/              # GitHub 配置
-│   └── workflows/        # CI/CD 流水线
-│       └── ci.yml        # 主要 CI 配置
-│
-└── docs/                 # 文档
-    ├── golangci-lint.md  # 代码检查文档
-    └── docker.md         # Docker 部署文档
-```
 
 ## 🛠️ 开发工具
 
@@ -211,11 +179,6 @@ make lint           # 检查所有代码
 make lint-go        # 只检查 Go 代码
 make lint-web       # 只检查前端代码
 
-# 运行测试
-make test           # 运行所有测试
-make test-go        # 只运行 Go 测试
-make test-web       # 只运行前端测试
-
 # 构建项目
 make build          # 构建完整项目
 make build-go       # 只构建后端
@@ -232,22 +195,6 @@ make docker-up      # 使用 docker-compose 启动
 make docker-down    # 使用 docker-compose 停止
 ```
 
-## 🧪 测试
-
-```bash
-# 运行所有测试
-make test
-
-# 只运行后端测试
-make test-go
-
-# 只运行前端测试
-make test-web
-
-# 生成测试覆盖率报告
-go test -coverprofile=coverage.out ./...
-go tool cover -html=coverage.out
-```
 
 ## 🚀 部署
 

@@ -1,7 +1,7 @@
 # Go + React 全栈项目 Makefile
 # 提供统一的项目管理命令
 
-.PHONY: help install lint lint-go lint-web test build clean dev run docker-build docker-run
+.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run
 
 # 默认目标
 help: ## 显示帮助信息
@@ -45,14 +45,6 @@ lint-web: ## 运行前端代码检查
 	@echo "🔧 修复前端代码格式..."
 	cd web && bun run lint --fix 2>/dev/null || echo "⚠️  前端自动修复可能不支持，请手动修复"
 
-# 测试
-test: test-go test-web ## 运行所有测试
-
-test-go: ## 运行 Go 测试
-	@echo "🧪 运行 Go 测试..."
-	go test -v ./...
-
-test-web: ## 运行前端测试
 	@echo "🧪 运行前端测试..."
 	cd web && bun test 2>/dev/null || echo "⚠️  前端测试未配置"
 

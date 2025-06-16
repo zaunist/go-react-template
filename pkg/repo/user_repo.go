@@ -13,9 +13,11 @@ import (
 // UserRepo 用户数据访问接口.
 type UserRepo interface {
 	Create(user *model.User) error
+	Update(user *model.User) error
 	GetByEmail(email string) (*model.User, error)
-	GetByID(id uint) (*model.User, error)
+	GetByID(id string) (*model.User, error)
 	GetByUsername(username string) (*model.User, error)
+	GetByGoogleID(googleID string) (*model.User, error)
 }
 
 // userRepo 用户数据访问实现.
@@ -35,6 +37,11 @@ func (r *userRepo) Create(user *model.User) error {
 	return r.db.Create(user).Error
 }
 
+// Update 更新用户信息.
+func (r *userRepo) Update(user *model.User) error {
+	return r.db.Save(user).Error
+}
+
 // GetByEmail 根据邮箱获取用户.
 func (r *userRepo) GetByEmail(email string) (*model.User, error) {
 	var user model.User
@@ -52,7 +59,7 @@ func (r *userRepo) GetByEmail(email string) (*model.User, error) {
 }
 
 // GetByID 根据ID获取用户.
-func (r *userRepo) GetByID(id uint) (*model.User, error) {
+func (r *userRepo) GetByID(id string) (*model.User, error) {
 	var user model.User
 
 	err := r.db.First(&user, id).Error
@@ -72,6 +79,22 @@ func (r *userRepo) GetByUsername(username string) (*model.User, error) {
 	var user model.User
 
 	err := r.db.Where("username = ?", username).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("用户不存在")
+		}
+
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// GetByGoogleID 根据Google ID获取用户.
+func (r *userRepo) GetByGoogleID(googleID string) (*model.User, error) {
+	var user model.User
+
+	err := r.db.Where("google_id = ?", googleID).First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("用户不存在")

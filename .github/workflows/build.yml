@@ -8,7 +8,6 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    environment: dockerhub  # github 的 secret 环境，方便多个项目复用
     steps:
       -
         name: Checkout

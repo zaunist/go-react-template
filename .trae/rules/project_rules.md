@@ -13,6 +13,7 @@
 - **一致性优于个性**：团队内保持代码风格、命名规范、文件结构的一致性。
 - **可读性优于简洁性**：代码应该易于理解和维护，而不是追求极致的简洁。
 - **渐进式重构**：持续改进代码质量，但避免大规模重写。
+- **实用主义**：专注于功能实现和用户体验，避免过度工程化。
 
 ## 2. 技术栈 (Tech Stack) 🛠️
 
@@ -21,17 +22,27 @@
 - **语言**: Go 1.24+
 - **Web 框架**: Echo v4
 - **ORM**: Gorm
-- **数据库**: SQLite(也可能是Postgres或者MySQL)
+- **数据库**: SQLite/MySQL/PostgreSQL (多数据库支持)
+- **身份认证**: JWT (golang-jwt/jwt)
+- **密码加密**: bcrypt
+- **第三方登录**: Google OAuth2
+- **配置管理**: godotenv
 - **依赖管理**: Go Modules
 
 ### 前端 (Frontend)
 
-- **语言**: Typescript
+- **语言**: TypeScript
 - **框架**: React 19+
+- **构建工具**: Vite
 - **CSS**: TailwindCSS v4+
-- **状态管理**: Zustand
-- **路由**: React Router DOM
-- **UI 组件库**: shadcn/ui
+- **状态管理**: Zustand (支持持久化)
+- **路由**: React Router DOM v7+
+- **UI 组件库**: shadcn/ui + Radix UI
+- **表单处理**: React Hook Form + Zod
+- **HTTP 客户端**: Axios
+- **国际化**: i18next
+- **主题切换**: next-themes
+- **通知组件**: Sonner
 - **包管理器**: bun
 
 ## 3. 项目结构 (Project Structure) 📂
@@ -138,23 +149,28 @@
 ```go
 // 示例：用户注册处理器
 func (h *UserHandler) Register(c echo.Context) error {
-    var req UserRegisterRequest
+    var req model.UserRegisterRequest
     if err := c.Bind(&req); err != nil {
-        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request format")
+        return c.JSON(http.StatusBadRequest, map[string]interface{}{
+            "code":    1,
+            "data":    nil,
+            "message": "请求参数格式错误",
+        })
     }
 
-    if err := c.Validate(&req); err != nil {
-        return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-    }
-
-    user, err := h.userService.Register(req)
+    user, err := h.userService.Register(&req)
     if err != nil {
-        return err // 由中间件统一处理
+        return c.JSON(http.StatusBadRequest, map[string]interface{}{
+            "code":    1,
+            "data":    nil,
+            "message": err.Error(),
+        })
     }
 
-    return c.JSON(http.StatusCreated, map[string]interface{}{
-        "success": true,
+    return c.JSON(http.StatusOK, map[string]interface{}{
+        "code":    0,
         "data":    user,
+        "message": "注册成功",
     })
 }
 ```
@@ -199,26 +215,26 @@ func (h *UserHandler) Register(c echo.Context) error {
 
 #### 4.2.2 统一响应格式
 
+项目采用统一的响应格式，所有 API 接口都应遵循以下规范：
+
 ```go
 // 成功响应
 {
-    "success": true,
+    "code": 0,
     "data": {},
     "message": "操作成功"
 }
 
 // 错误响应
 {
-    "success": false,
-    "error": {
-        "code": "USER_NOT_FOUND",
-        "message": "用户不存在"
-    }
+    "code": 1,
+    "data": null,
+    "message": "具体错误信息"
 }
 
 // 分页响应
 {
-    "success": true,
+    "code": 0,
     "data": {
         "items": [],
         "pagination": {
@@ -227,9 +243,16 @@ func (h *UserHandler) Register(c echo.Context) error {
             "total": 100,
             "pages": 10
         }
-    }
+    },
+    "message": "获取成功"
 }
 ```
+
+**响应字段说明：**
+
+- `code`: 业务状态码，0 表示成功，非 0 表示失败
+- `data`: 响应数据，成功时包含具体数据，失败时为 null
+- `message`: 响应消息，提供用户友好的提示信息
 
 #### 4.2.3 错误处理
 
@@ -242,41 +265,64 @@ func (h *UserHandler) Register(c echo.Context) error {
 
 #### 4.3.1 输入验证
 
-- **所有用户输入必须验证**
-- **使用 validator 库进行参数验证**
-- **防止 SQL 注入（使用 GORM）**
-- **防止 XSS 攻击**
+- **所有用户输入必须验证**：使用结构体标签进行基础验证
+- **防止 SQL 注入**：使用 GORM 的参数化查询
+- **防止 XSS 攻击**：对用户输入进行适当的转义和过滤
+- **文件上传安全**：限制文件类型、大小和存储位置
 
-#### 4.3.2 身份认证
+#### 4.3.2 身份认证与授权
 
-- **使用 JWT 进行身份认证**
-- **密码使用 bcrypt 加密**
-- **实现 token 刷新机制**
-- **设置合理的 token 过期时间**
+- **JWT 认证**：使用 `golang-jwt/jwt/v5` 库实现 JWT 认证
+- **密码安全**：使用 `bcrypt` 进行密码哈希，成本因子设为默认值
+- **Token 管理**：设置合理的过期时间（默认 24 小时），支持 token 刷新
+- **第三方登录**：支持 Google OAuth2 登录，安全处理用户信息
+- **中间件保护**：使用 JWT 中间件保护需要认证的路由
+
+```go
+// JWT 中间件使用示例
+protected := api.Group("", middleware.JWT())
+protected.GET("/profile", userHandler.GetProfile)
+```
 
 ### 4.4 性能优化
 
 #### 4.4.1 数据库优化
 
-- **合理使用索引**
-- **避免 N+1 查询问题**
-- **使用预加载（Preload）**
-- **分页查询大数据集**
+- **索引策略**：在经常查询的字段上建立索引（如 email、username）
+- **避免 N+1 查询**：使用 GORM 的 `Preload` 进行关联查询
+- **分页查询**：对大数据集使用 `Limit` 和 `Offset` 进行分页
+- **软删除**：使用 GORM 的软删除功能，避免物理删除数据
+- **连接池**：合理配置数据库连接池参数
+
+```go
+// 预加载示例
+db.Preload("Profile").Find(&users)
+
+// 分页查询示例
+db.Limit(10).Offset(page * 10).Find(&users)
+```
 
 #### 4.4.2 缓存策略
 
-- **对频繁查询的数据使用缓存**
-- **设置合理的缓存过期时间**
-- **缓存失效策略**
+- **静态资源缓存**：前端静态资源使用浏览器缓存
+- **API 响应缓存**：对不经常变化的数据进行适当缓存
+- **数据库查询优化**：避免重复查询，合理使用事务
 
 ### 4.5 日志和监控
 
 #### 4.5.1 日志规范
 
-- **使用结构化日志（logrus）**
-- **记录关键操作和错误**
-- **不记录敏感信息**
-- **设置合适的日志级别**
+- **使用标准日志库**：使用 Go 标准库 `log` 进行日志记录
+- **记录关键操作**：记录用户登录、注册、重要业务操作
+- **错误日志**：记录所有错误信息，便于问题排查
+- **安全考虑**：不记录密码、token 等敏感信息
+- **中间件日志**：使用 Echo 的 Logger 中间件记录 HTTP 请求
+
+```go
+// 日志记录示例
+log.Printf("用户注册成功: %s", user.Email)
+log.Printf("数据库连接失败: %v", err)
+```
 
 ### 4.6 注释规范
 
@@ -365,6 +411,7 @@ export default Component;
 #### 5.1.5 组件设计风格
 
 - 整体风格：
+
   - 这是一种在大面积浅色背景下，使用渐变、模糊、动态流光、极细描边、微噪点、外发光以及庄重的无衬线字体，外加流畅克制的微动效来组织和修饰界面元素的网页设计风格。
   - 背景颜色：橙色系小清新渐变色
   - 文字颜色：与背景颜色对比度高的字体颜色，禁止使用蓝紫色
@@ -400,68 +447,63 @@ export default Component;
 
 #### 5.2.2 Store 结构模板
 
+基于项目实际使用的认证状态管理示例：
+
 ```typescript
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import { immer } from "zustand/middleware/immer";
+import { persist } from "zustand/middleware";
+import { userApi } from "@/api";
+import type { User } from "@/api";
 
-// 状态类型定义
-interface UserState {
-  // 状态数据
+// 认证状态接口
+interface AuthState {
   user: User | null;
-  users: User[];
-  loading: boolean;
-  error: string | null;
-
-  // 同步操作
+  isAuthenticated: boolean;
+  login: (user: User) => void;
+  logout: () => Promise<void>;
   setUser: (user: User) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-
-  // 异步操作
-  fetchUser: (id: string) => Promise<void>;
-  updateUser: (user: Partial<User>) => Promise<void>;
-
-  // 重置操作
-  reset: () => void;
+  clearAuth: () => void;
 }
 
-// Store 实现
-export const useUserStore = create<UserState>()();
-devtools(
-  immer((set, get) => ({
-    // 初始状态
-    user: null,
-    users: [],
-    loading: false,
-    error: null,
+// 创建认证状态store
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
 
-    // 同步操作
-    setUser: (user) => set({ user }),
-    setLoading: (loading) => set({ loading }),
-    setError: (error) => set({ error }),
+      // 登录
+      login: (user: User) => {
+        set({ user, isAuthenticated: true });
+      },
 
-    // 异步操作
-    fetchUser: async (id) => {
-      set({ loading: true, error: null });
-      try {
-        const user = await userApi.getUser(id);
-        set({ user, loading: false });
-      } catch (error) {
-        set({ error: error.message, loading: false });
-      }
-    },
+      // 登出
+      logout: async () => {
+        try {
+          await userApi.logout();
+        } catch (error) {
+          console.error("注销请求失败:", error);
+        } finally {
+          localStorage.removeItem("token");
+          set({ user: null, isAuthenticated: false });
+        }
+      },
 
-    // 重置操作
-    reset: () =>
-      set({
-        user: null,
-        users: [],
-        loading: false,
-        error: null,
-      }),
-  })),
-  { name: "user-store" }
+      // 设置用户信息
+      setUser: (user: User) => {
+        set({ user, isAuthenticated: true });
+      },
+
+      // 清除认证状态
+      clearAuth: () => {
+        localStorage.removeItem("token");
+        set({ user: null, isAuthenticated: false });
+      },
+    }),
+    {
+      name: "auth-storage", // 持久化存储的key
+    }
+  )
 );
 ```
 
@@ -485,66 +527,96 @@ const userStore = useUserStore(); // 会导致不必要的重渲染
 
 #### 5.3.1 路由配置
 
+项目使用 React Router DOM v7+ 进行路由管理，支持嵌套路由和路由守卫：
+
 ```typescript
 // router/index.tsx
-import { createBrowserRouter } from "react-router-dom";
-import { lazy } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { Layout, SimpleLayout } from "../components/layout";
+import { useAuthStore } from "../store/authStore";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
+import DashboardPage from "../pages/DashboardPage";
+import BlogPage from "../pages/BlogPage";
 
-// 懒加载页面组件
-const HomePage = lazy(() => import("@/pages/HomePage"));
-const UserPage = lazy(() => import("@/pages/UserPage"));
-const LoginPage = lazy(() => import("@/pages/LoginPage"));
+// 受保护的路由组件
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+// 公开路由组件（已登录用户重定向到仪表板）
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+// 路由配置
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
+    element: <Layout />,
     children: [
       {
         index: true,
         element: <HomePage />,
       },
       {
-        path: "users/:id",
-        element: <UserPage />,
-        loader: userLoader, // 数据预加载
+        path: "blog",
+        element: <BlogPage />,
+      },
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: (
+      <SimpleLayout>
+        <PublicRoute>
+          <LoginPage />
+        </PublicRoute>
+      </SimpleLayout>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <SimpleLayout>
+        <PublicRoute>
+          <RegisterPage />
+        </PublicRoute>
+      </SimpleLayout>
+    ),
   },
 ]);
 ```
 
 #### 5.3.2 路由守卫
 
-```typescript
-// components/ProtectedRoute.tsx
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requiredRole?: string;
-}
+项目实现了两种路由守卫：
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  requiredRole,
-}) => {
-  const { user } = useUserStore();
-  const location = useLocation();
+- **ProtectedRoute**: 保护需要登录的页面，未登录用户重定向到登录页
+- **PublicRoute**: 保护登录/注册页面，已登录用户重定向到仪表板
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (requiredRole && !user.roles.includes(requiredRole)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return <>{children}</>;
-};
-```
+路由守卫的实现已在上面的路由配置中展示，通过 Zustand 状态管理获取用户认证状态。
 
 ### 5.4 样式开发规范 (TailwindCSS)
 
@@ -588,9 +660,75 @@ export const getButtonClasses = (variant: keyof typeof buttonVariants) => {
 };
 ```
 
-### 5.5 移动端适配规范 📱
+### 5.5 组件开发规范
 
-#### 5.5.1 响应式设计原则
+#### 5.5.1 组件结构
+
+项目使用 Radix UI 作为基础组件库，结合 TailwindCSS 进行样式定制：
+
+```typescript
+// components/ui/button.tsx
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+Button.displayName = "Button";
+
+export { Button, buttonVariants };
+```
+
+### 5.6 移动端适配规范 📱
+
+#### 5.6.1 响应式设计原则
 
 - **移动优先 (Mobile First)**：从最小屏幕开始设计，逐步增强到大屏幕
 - **断点策略**：使用 TailwindCSS 标准断点
@@ -603,21 +741,26 @@ export const getButtonClasses = (variant: keyof typeof buttonVariants) => {
 
 ```typescript
 // 响应式布局示例
-<div className="
+<div
+  className="
   // 移动端：单列布局，小间距
   flex flex-col gap-4 p-4
   // 平板：两列布局，中等间距
   md:grid md:grid-cols-2 md:gap-6 md:p-6
   // 桌面：三列布局，大间距
   lg:grid-cols-3 lg:gap-8 lg:p-8
-">
-  {items.map(item => (
-    <Card key={item.id} className="
+"
+>
+  {items.map((item) => (
+    <Card
+      key={item.id}
+      className="
       // 移动端：全宽卡片
       w-full
       // 桌面：固定最大宽度
       lg:max-w-sm
-    ">
+    "
+    >
       {item.content}
     </Card>
   ))}
@@ -676,7 +819,7 @@ export const TouchButton: React.FC<TouchButtonProps> = ({
 // 移动端底部导航组件
 export const MobileBottomNav: React.FC = () => {
   const location = useLocation();
-  
+
   const navItems = [
     { path: "/", icon: HomeIcon, label: "首页" },
     { path: "/explore", icon: SearchIcon, label: "发现" },
@@ -685,7 +828,8 @@ export const MobileBottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="
+    <nav
+      className="
       // 固定在底部
       fixed bottom-0 left-0 right-0 z-50
       // 背景和边框
@@ -694,7 +838,8 @@ export const MobileBottomNav: React.FC = () => {
       pb-safe
       // 桌面端隐藏
       lg:hidden
-    ">
+    "
+    >
       <div className="flex items-center justify-around px-2 py-1">
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
@@ -753,9 +898,7 @@ export const MobileInput: React.FC<MobileInputProps> = ({
           // 焦点样式
           "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
           // 错误状态
-          error
-            ? "border-red-300 bg-red-50"
-            : "border-gray-300 bg-white",
+          error ? "border-red-300 bg-red-50" : "border-gray-300 bg-white",
           // 禁用缩放（防止iOS Safari缩放）
           "text-[16px] sm:text-sm"
         )}
@@ -865,7 +1008,7 @@ export const useSwipeGesture = ({
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > threshold;
     const isRightSwipe = distance < -threshold;
@@ -967,7 +1110,8 @@ export const userApi = {
   updateUser: (id: string, userData: UpdateUserRequest): Promise<User> =>
     apiClient.put(`/v1/users/${id}`, userData),
 
-  deleteUser: (id: string): Promise<void> => apiClient.delete(`/v1/users/${id}`),
+  deleteUser: (id: string): Promise<void> =>
+    apiClient.delete(`/v1/users/${id}`),
 };
 ```
 
@@ -1004,7 +1148,6 @@ export interface UpdateUserRequest {
 }
 ```
 
-
 #### 5.8.1 类型定义
 
 ```typescript
@@ -1026,11 +1169,218 @@ export interface User {
 - **类型注释**：复杂类型定义需要注释说明
 - **API 注释**：API 调用需要注释说明用途和参数
 
-## 6. 开发工具和环境 🛠️
+## 6. 国际化 (i18n) 规范 🌍
 
-### 6.1 必需工具
+### 6.1 配置设置
 
-#### 6.1.1 后端开发工具
+项目使用 i18next 和 react-i18next 进行国际化支持：
+
+```typescript
+// i18n/index.ts
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import Backend from "i18next-http-backend";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+import en from "./locales/en.json";
+import zh from "./locales/zh.json";
+
+const resources = {
+  en: {
+    translation: en,
+  },
+  zh: {
+    translation: zh,
+  },
+};
+
+i18n
+  .use(Backend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: "en",
+    debug: import.meta.env.DEV,
+
+    interpolation: {
+      escapeValue: false, // React 已经进行了 XSS 保护
+    },
+
+    detection: {
+      order: ["localStorage", "navigator", "htmlTag"],
+      caches: ["localStorage"],
+    },
+  });
+
+export default i18n;
+```
+
+### 6.2 语言文件组织
+
+```json
+// i18n/locales/en.json
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "loginSuccess": "Login successful",
+    "loginError": "Login failed"
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings"
+  }
+}
+```
+
+```json
+// i18n/locales/zh.json
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "loginSuccess": "登录成功",
+    "loginError": "登录失败"
+  },
+  "navigation": {
+    "home": "首页",
+    "dashboard": "仪表板",
+    "profile": "个人资料",
+    "settings": "设置"
+  }
+}
+```
+
+### 6.3 使用规范
+
+#### 6.3.1 在组件中使用翻译
+
+```typescript
+import { useTranslation } from "react-i18next";
+
+export const LoginForm: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <form>
+      <h1>{t("auth.login")}</h1>
+      <input placeholder={t("auth.email")} />
+      <input placeholder={t("auth.password")} type="password" />
+      <button type="submit">{t("auth.login")}</button>
+      <a href="/forgot-password">{t("auth.forgotPassword")}</a>
+    </form>
+  );
+};
+```
+
+#### 6.3.2 带参数的翻译
+
+```typescript
+// 语言文件
+{
+  "welcome": "Welcome, {{name}}!",
+  "itemCount": "You have {{count}} item",
+  "itemCount_plural": "You have {{count}} items"
+}
+
+// 组件中使用
+const { t } = useTranslation()
+
+// 带参数
+<h1>{t('welcome', { name: user.name })}</h1>
+
+// 复数形式
+<p>{t('itemCount', { count: items.length })}</p>
+```
+
+#### 6.3.3 语言切换组件
+
+```typescript
+import { useTranslation } from "react-i18next";
+
+export const LanguageSwitcher: React.FC = () => {
+  const { i18n } = useTranslation();
+
+  const languages = [
+    { code: "en", name: "English" },
+    { code: "zh", name: "中文" },
+  ];
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
+  return (
+    <select
+      value={i18n.language}
+      onChange={(e) => changeLanguage(e.target.value)}
+    >
+      {languages.map((lang) => (
+        <option key={lang.code} value={lang.code}>
+          {lang.name}
+        </option>
+      ))}
+    </select>
+  );
+};
+```
+
+### 6.4 最佳实践
+
+#### 6.4.1 命名规范
+
+- **命名空间**：使用点分隔的命名空间，如 `auth.login`、`common.loading`
+- **语义化**：键名应该语义化，描述内容而不是位置
+- **一致性**：保持命名风格的一致性
+
+#### 6.4.2 文本组织
+
+- **按功能模块分组**：将相关的文本放在同一个命名空间下
+- **复用通用文本**：将常用的文本（如按钮文字）放在 `common` 命名空间
+- **避免嵌套过深**：命名空间层级不要超过 3 层
+
+#### 6.4.3 开发流程
+
+- **先英文后翻译**：开发时先用英文，功能完成后再添加其他语言
+- **翻译文件同步**：确保所有语言文件的键保持同步
+- **测试多语言**：在不同语言环境下测试界面布局
+
+## 7. 开发工具和环境 🛠️
+
+### 7.1 必需工具
+
+#### 7.1.1 后端开发工具
 
 - **Go**: 1.24+ 版本
 - **Air**: 热重载工具，提升开发效率
@@ -1038,7 +1388,7 @@ export interface User {
 - **Docker**: 容器化部署
 - **Make**: 项目管理和构建工具
 
-#### 6.1.2 前端开发工具
+#### 7.1.2 前端开发工具
 
 - **Node.js**: 18+ 版本
 - **Bun**: 快速的 JavaScript 运行时和包管理器
@@ -1047,7 +1397,9 @@ export interface User {
 - **ESLint**: 代码质量检查
 - **Prettier**: 代码格式化
 
+## 8. 项目特定规约
 
-## 7. 项目特定规约
+### 8.1 代码规范
 
-记住，代码是写给人看的，只是机器恰好可以运行而已！
+- 记住，代码是写给人看的，只是机器恰好可以运行而已！
+- 保持代码简洁、可读、可维护，遵循项目约定，让团队协作更加高效。

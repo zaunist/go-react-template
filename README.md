@@ -233,7 +233,7 @@ make docker-down    # 使用 docker-compose 停止
    docker build -t go-react-template .
 
    # 运行容器
-   docker run -d -p 8080:8080 \
+   docker run -d -p 1323:1323 \
      -e DATABASE_URL="/app/data/data.db" \
      -e JWT_SECRET="your-production-secret" \
      -v $(pwd)/data:/app/data \

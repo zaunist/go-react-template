@@ -44,14 +44,7 @@ client.interceptors.request.use(
 // 响应拦截器
 client.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
-    // 统一处理成功响应
-    const { data } = response
-    
-    // 如果后端返回的code不为0，视为业务错误
-    if (data.code !== 0) {
-      throw new Error(data.message || '请求失败')
-    }
-    
+    // 直接返回响应，让调用方处理业务逻辑
     return response
   },
   (error: AxiosError) => {
@@ -64,11 +57,16 @@ client.interceptors.response.use(
       
       switch (status) {
         case 400:
-          message = '请求参数错误'
+          message = (data as any)?.message || '请求参数错误'
           break
         case 401:
           message = '未授权，请重新登录'
-          // 可以在这里处理登录过期逻辑
+          // 处理登录过期逻辑
+          localStorage.removeItem('token')
+          // 动态导入避免循环依赖
+          import('../store/authStore').then(({ useAuthStore }) => {
+            useAuthStore.getState().clearAuth()
+          })
           break
         case 403:
           message = '权限不足'

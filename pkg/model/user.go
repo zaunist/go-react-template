@@ -4,6 +4,7 @@ package model
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -86,4 +87,12 @@ type UserUpdateProfileRequest struct {
 	Username string `json:"username" validate:"omitempty,min=3,max=50"`
 	Email    string `json:"email" validate:"omitempty,email"`
 	Bio      string `json:"bio" validate:"omitempty,max=500"`
+}
+
+// BeforeCreate 在创建前生成UUID
+func (u *User) BeforeCreate(tx *gorm.DB) error {
+	if u.ID == "" {
+		u.ID = uuid.New().String()
+	}
+	return nil
 }

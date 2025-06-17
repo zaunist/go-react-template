@@ -1,10 +1,16 @@
 // 路由配置
 import { createBrowserRouter, Navigate } from 'react-router-dom'
-import App from '../App'
+import { Layout, SimpleLayout } from '../components/layout'
 import { useAuthStore } from '../store/authStore'
+import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import DashboardPage from '../pages/DashboardPage'
+import BlogPage from '../pages/BlogPage'
+import BlogDetailPage from '../pages/BlogDetailPage'
+import PrivacyPage from '../pages/PrivacyPage'
+import TermsPage from '../pages/TermsPage'
+import CookiesPage from '../pages/CookiesPage'
 
 
 // 受保护的路由组件
@@ -33,12 +39,46 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <Layout />,
     children: [
       {
         index: true,
-        element: <Navigate to="/dashboard" replace />,
+        element: <HomePage />,
       },
+      {
+        path: 'blog',
+        element: <BlogPage />,
+      },
+      {
+        path: 'blog/:id',
+        element: <BlogDetailPage />,
+      },
+      {
+        path: 'privacy',
+        element: <PrivacyPage />,
+      },
+      {
+        path: 'terms',
+        element: <TermsPage />,
+      },
+      {
+        path: 'cookies',
+        element: <CookiesPage />,
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: '/',
+    element: <SimpleLayout />,
+    children: [
       {
         path: 'login',
         element: (
@@ -53,14 +93,6 @@ export const router = createBrowserRouter([
           <PublicRoute>
             <RegisterPage />
           </PublicRoute>
-        ),
-      },
-      {
-        path: 'dashboard',
-        element: (
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
         ),
       },
     ],

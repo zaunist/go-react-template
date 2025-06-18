@@ -273,9 +273,7 @@ export default function LoginPage() {
             </div>
 
             {/* Google 登录按钮容器 */}
-            <div className="flex justify-center mb-6">
-              <div ref={googleButtonRef} className="w-full" />
-            </div>
+            <div className="flex justify-center mb-6" ref={googleButtonRef} />
 
             <div className="mt-6 text-center text-sm">
               <span className="text-gray-600">{t("auth.noAccount")}</span>

@@ -1,7 +1,22 @@
 // 登录页面
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+// 声明全局 Google 类型
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: any) => void;
+          prompt: () => void;
+          renderButton: (element: HTMLElement, config: any) => void;
+        };
+      };
+    };
+  }
+}
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,10 +38,16 @@ export default function LoginPage() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+  const googleButtonRef = useRef<HTMLDivElement>(null);
 
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 获取重定向路径，默认为dashboard
+  const from = location.state?.from?.pathname || "/dashboard";
 
   // 处理表单输入
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +70,7 @@ export default function LoginPage() {
         localStorage.setItem("token", response.data.token);
         // 登录成功，保存用户信息
         login(response.data.user);
-        navigate("/dashboard");
+        navigate(from, { replace: true });
       } else {
         setError(response.message);
       }
@@ -59,6 +80,98 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // 处理 Google 登录
+  const handleGoogleLogin = async (credential: string) => {
+    setGoogleLoading(true);
+    setError("");
+
+    try {
+      const response = await userApi.googleLogin({ id_token: credential });
+      if (response.code === 0) {
+        // 保存token到localStorage
+        localStorage.setItem("token", response.data.token);
+        // 登录成功，保存用户信息
+        login(response.data.user);
+        navigate(from, { replace: true });
+      } else {
+        setError(response.message);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("auth.googleLoginError"));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  // 初始化 Google Sign-In
+  useEffect(() => {
+    // 添加 meta 标签指定客户端 ID
+    const addGoogleClientIdMeta = () => {
+      const existingMeta = document.querySelector(
+        'meta[name="google-signin-client_id"]'
+      );
+      if (!existingMeta) {
+        const meta = document.createElement("meta");
+        meta.name = "google-signin-client_id";
+        meta.content =
+          import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+          "586271718950-aebomfd3uvj2uofs81nkvtiu4meaggmn.apps.googleusercontent.com";
+        document.head.appendChild(meta);
+      }
+    };
+
+    const initializeGoogleSignIn = () => {
+      if (window.google && window.google.accounts) {
+        // 初始化 Google Identity Services
+        window.google.accounts.id.initialize({
+          client_id:
+            import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+            "586271718950-aebomfd3uvj2uofs81nkvtiu4meaggmn.apps.googleusercontent.com",
+          callback: (response: any) => {
+            handleGoogleLogin(response.credential);
+          },
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        // 渲染 Google 登录按钮
+        if (googleButtonRef.current) {
+          window.google.accounts.id.renderButton(googleButtonRef.current, {
+            theme: "outline",
+            size: "large",
+            type: "standard",
+            shape: "rectangular",
+            text: "continue_with",
+            logo_alignment: "left",
+          });
+        }
+      }
+    };
+
+    // 动态加载 Google Identity Services 脚本
+    if (!window.google) {
+      addGoogleClientIdMeta();
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleSignIn;
+      document.head.appendChild(script);
+    } else {
+      initializeGoogleSignIn();
+    }
+
+    // 清理函数
+    return () => {
+      const meta = document.querySelector(
+        'meta[name="google-signin-client_id"]'
+      );
+      if (meta) {
+        meta.remove();
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 text-gray-800 font-sans overflow-hidden relative">
@@ -141,7 +254,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-rose-200 to-pink-200 hover:from-rose-300 hover:to-pink-300 border border-rose-300 text-gray-800 font-medium py-3 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-rose-200/50 backdrop-blur-sm"
-                disabled={loading}
+                disabled={loading || googleLoading}
               >
                 <span className="relative z-10">
                   {loading ? t("common.loading") : t("auth.login")}
@@ -151,6 +264,18 @@ export default function LoginPage() {
                 )}
               </Button>
             </form>
+
+            {/* 分隔线 */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-rose-200/50"></div>
+              </div>
+            </div>
+
+            {/* Google 登录按钮容器 */}
+            <div className="flex justify-center mb-6">
+              <div ref={googleButtonRef} className="w-full" />
+            </div>
 
             <div className="mt-6 text-center text-sm">
               <span className="text-gray-600">{t("auth.noAccount")}</span>

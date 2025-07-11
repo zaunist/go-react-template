@@ -45,8 +45,8 @@ func setupPublicRoutes(api *echo.Group, userHandler *handler.UserHandler) {
 
 // setupProtectedRoutes 设置受保护路由（需要认证）
 func setupProtectedRoutes(api *echo.Group, userHandler *handler.UserHandler) {
-	// 创建受保护的路由组，应用JWT中间件
-	protected := api.Group("", middleware.JWT())
+	// 创建受保护的路由组，应用Session中间件
+	protected := api.Group("", middleware.Session())
 
 	// 受保护的认证路由
 	protectedAuth := protected.Group("/auth")

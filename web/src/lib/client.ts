@@ -17,6 +17,7 @@ export interface ApiResponse<T = any> {
 const client: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+  withCredentials: true, // 启用cookie
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,11 +30,7 @@ client.interceptors.request.use(
     const { currentLanguage } = useLanguageStore.getState()
     config.headers['X-Language'] = currentLanguage
     
-    // 可以在这里添加认证token等
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
+    // 不再需要手动设置Authorization头，因为使用了cookie
     return config
   },
   (error) => {
@@ -61,8 +58,7 @@ client.interceptors.response.use(
           break
         case 401:
           message = '未授权，请重新登录'
-          // 处理登录过期逻辑
-          localStorage.removeItem('token')
+          // 处理登录过期逻辑 - 不再需要清除token，因为使用了cookie
           // 动态导入避免循环依赖
           import('../store/authStore').then(({ useAuthStore }) => {
             useAuthStore.getState().clearAuth()

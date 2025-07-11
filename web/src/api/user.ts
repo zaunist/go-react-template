@@ -31,7 +31,6 @@ export interface LoginRequest {
 // 登录响应数据
 export interface LoginResponse {
   user: User;
-  token: string;
 }
 
 // Google登录请求参数

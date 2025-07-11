@@ -14,8 +14,8 @@ type Config struct {
 	Server ServerConfig `json:"server"`
 	// 数据库配置
 	Database DatabaseConfig `json:"database"`
-	// JWT配置
-	JWT JWTConfig `json:"jwt"`
+	// Session配置
+	Session SessionConfig `json:"session"`
 }
 
 // ServerConfig 服务器配置.
@@ -36,9 +36,9 @@ type DatabaseConfig struct {
 	Path     string `json:"path"`     // SQLite数据库文件路径
 }
 
-// JWTConfig JWT配置.
-type JWTConfig struct {
-	Secret     string `json:"secret"`      // JWT密钥
+// SessionConfig Session配置.
+type SessionConfig struct {
+	Secret     string `json:"secret"`      // Session密钥
 	ExpireHour int    `json:"expire_hour"` // 过期时间(小时)
 }
 
@@ -68,9 +68,9 @@ func Init() error {
 			SSLMode:  getEnv("DB_SSLMODE", "disable"),
 			Path:     getEnv("DB_PATH", "app.db"),
 		},
-		JWT: JWTConfig{
-			Secret:     getEnv("JWT_SECRET", "your-secret-key"),
-			ExpireHour: getEnvAsInt("JWT_EXPIRE_HOUR", 24),
+		Session: SessionConfig{
+			Secret:     getEnv("SESSION_SECRET", "your-secret-key"),
+			ExpireHour: getEnvAsInt("SESSION_EXPIRE_HOUR", 24),
 		},
 	}
 

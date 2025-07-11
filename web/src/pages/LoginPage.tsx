@@ -66,9 +66,7 @@ export default function LoginPage() {
     try {
       const response = await userApi.login(formData);
       if (response.code === 0) {
-        // 保存token到localStorage
-        localStorage.setItem("token", response.data.token);
-        // 登录成功，保存用户信息
+        // 登录成功，保存用户信息 - 不再需要保存token
         login(response.data.user);
         navigate(from, { replace: true });
       } else {
@@ -89,9 +87,7 @@ export default function LoginPage() {
     try {
       const response = await userApi.googleLogin({ id_token: credential });
       if (response.code === 0) {
-        // 保存token到localStorage
-        localStorage.setItem("token", response.data.token);
-        // 登录成功，保存用户信息
+        // 登录成功，保存用户信息 - 不再需要保存token
         login(response.data.user);
         navigate(from, { replace: true });
       } else {

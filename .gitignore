@@ -3,6 +3,7 @@
 /web/dist
 /static
 server
+app
 
 # 前端配置
 /web/.env
@@ -12,6 +13,7 @@ server
 /web/.env.production
 /web/bun.lock
 /web/package.json.lock
+/web/pnpm-lock.yaml
 
 # 环境配置文件
 .env

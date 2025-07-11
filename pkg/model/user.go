@@ -15,9 +15,12 @@ type User struct {
 	Email     string         `json:"email" gorm:"uniqueIndex;not null;size:100" validate:"required,email"`
 	Password  string         `json:"-" gorm:"size:255" validate:"omitempty,min=6"` // Google登录用户可能没有密码
 	AvatarURL string         `json:"avatar_url" gorm:"size:500;comment:用户头像URL"`
-	GoogleID  string         `json:"-" gorm:"uniqueIndex;size:100;comment:Google用户ID"`
+	GoogleID  *string        `json:"-" gorm:"uniqueIndex;size:100;comment:Google用户ID"`
 	LoginType LoginType      `json:"login_type" gorm:"type:varchar(20);not null;default:'local';comment:登录类型"`
 	Bio       string         `json:"bio" gorm:"type:text"`
+	IsBanned  bool           `json:"is_banned" gorm:"default:false;comment:用户是否被封禁"`
+	BannedAt  *time.Time     `json:"banned_at,omitempty" gorm:"comment:封禁时间"`
+	BanReason string         `json:"ban_reason,omitempty" gorm:"size:500;comment:封禁原因"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`

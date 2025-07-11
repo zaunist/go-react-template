@@ -61,7 +61,7 @@ func (h *UserHandler) Login(c echo.Context) error {
 		})
 	}
 
-	user, err := h.userService.Login(&req)
+	loginResponse, err := h.userService.Login(&req)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"code":    1,
@@ -70,9 +70,25 @@ func (h *UserHandler) Login(c echo.Context) error {
 		})
 	}
 
+	// 创建session
+	sessionMiddleware := middleware.NewSessionMiddleware()
+	user := &model.User{
+		ID:       loginResponse.User.ID,
+		Username: loginResponse.User.Username,
+		Email:    loginResponse.User.Email,
+	}
+	
+	if err := sessionMiddleware.CreateSession(c, user); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"code":    1,
+			"data":    nil,
+			"message": "创建session失败",
+		})
+	}
+
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"code":    0,
-		"data":    user,
+		"data":    loginResponse,
 		"message": "登录成功",
 	})
 }
@@ -117,6 +133,22 @@ func (h *UserHandler) GoogleLogin(c echo.Context) error {
 		})
 	}
 
+	// 创建session
+	sessionMiddleware := middleware.NewSessionMiddleware()
+	user := &model.User{
+		ID:       loginResponse.User.ID,
+		Username: loginResponse.User.Username,
+		Email:    loginResponse.User.Email,
+	}
+	
+	if err := sessionMiddleware.CreateSession(c, user); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"code":    1,
+			"data":    nil,
+			"message": "创建session失败",
+		})
+	}
+
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"code":    0,
 		"data":    loginResponse,
@@ -126,40 +158,15 @@ func (h *UserHandler) GoogleLogin(c echo.Context) error {
 
 // POST /api/v1/auth/logout.
 func (h *UserHandler) Logout(c echo.Context) error {
-	// 从请求头中获取token
-	token := c.Request().Header.Get("Authorization")
-	if token == "" {
-		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
+	// 销毁session
+	sessionMiddleware := middleware.NewSessionMiddleware()
+	if err := sessionMiddleware.DestroySession(c); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"code":    1,
 			"data":    nil,
-			"message": "未提供认证token",
+			"message": "注销失败",
 		})
 	}
-
-	// 验证token格式（Bearer token）
-	if len(token) > 7 && token[:7] == "Bearer " {
-		token = token[7:] // 移除 "Bearer " 前缀
-	} else {
-		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
-			"code":    1,
-			"data":    nil,
-			"message": "token格式错误",
-		})
-	}
-
-	// 验证JWT token的有效性
-	userID := c.Get("user_id")
-	if userID == nil {
-		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
-			"code":    1,
-			"data":    nil,
-			"message": "无效的token",
-		})
-	}
-
-	// 在实际项目中，这里可以将token加入黑名单
-	// 或者在Redis中记录已注销的token，防止token重复使用
-	// 例如：h.tokenBlacklist.Add(token, time.Until(tokenExpiry))
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"code":    0,
@@ -179,8 +186,8 @@ func (h *UserHandler) UpdateProfile(c echo.Context) error {
 		})
 	}
 
-	// 从JWT中获取用户ID
-	userID, err := middleware.ExtractUserIDFromContext(c)
+	// 从session中获取用户ID
+	userID, err := middleware.ExtractUserIDFromSession(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"code":    1,
@@ -216,8 +223,8 @@ func (h *UserHandler) ChangePassword(c echo.Context) error {
 		})
 	}
 
-	// 从JWT中获取用户ID
-	userID, err := middleware.ExtractUserIDFromContext(c)
+	// 从session中获取用户ID
+	userID, err := middleware.ExtractUserIDFromSession(c)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"code":    1,

@@ -1,20 +1,20 @@
 # 第一阶段：前端构建阶段
-FROM oven/bun:latest AS frontend-builder
+FROM node:20-alpine AS frontend-builder
 
 # 设置工作目录
 WORKDIR /app
 
 # 复制前端项目文件
-COPY web/package.json web/bun.lock* ./
+COPY web/package.json web/pnpm-lock.yaml ./
 
 # 安装前端依赖
-RUN bun install
+RUN npm install -g pnpm && pnpm install
 
 # 复制前端源码
 COPY web/ ./
 
 # 构建前端
-RUN bun run build
+RUN pnpm run build
 
 # 第二阶段：后端构建阶段
 FROM golang:1.24-alpine AS backend-builder
@@ -29,7 +29,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 
 # 下载 Go 依赖
-RUN go mod download
+RUN go env -w GO111MODULE=on &&  go env -w GOPROXY=https://goproxy.cn,direct && go mod download
 
 # 复制后端源码
 COPY . .

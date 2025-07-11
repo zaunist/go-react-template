@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>()(
           console.error('注销请求失败:', error)
         } finally {
           // 无论后端请求是否成功，都清除本地状态
-          localStorage.removeItem('token')
+          // 不再需要清除token，因为使用了cookie
           set({ user: null, isAuthenticated: false })
         }
       },
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>()(
       
       // 清除认证状态（用于token过期等情况）
       clearAuth: () => {
-        localStorage.removeItem('token')
+        // 不再需要清除token，因为使用了cookie
         set({ user: null, isAuthenticated: false })
       },
     }),

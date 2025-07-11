@@ -27,21 +27,20 @@ type UserService interface {
 
 // LoginResponse 登录响应结构
 type LoginResponse struct {
-	User  *model.UserResponse `json:"user"`
-	Token string              `json:"token"`
+	User *model.UserResponse `json:"user"`
 }
 
 // userService 用户业务逻辑实现.
 type userService struct {
-	userRepo      repo.UserRepo
-	jwtMiddleware *middleware.JWTMiddleware
+	userRepo          repo.UserRepo
+	sessionMiddleware *middleware.SessionMiddleware
 }
 
 // NewUserService 创建用户业务逻辑实例.
 func NewUserService(userRepo repo.UserRepo) UserService {
 	return &userService{
-		userRepo:      userRepo,
-		jwtMiddleware: middleware.NewJWTMiddleware(),
+		userRepo:          userRepo,
+		sessionMiddleware: middleware.NewSessionMiddleware(),
 	}
 }
 
@@ -76,7 +75,7 @@ func (s *userService) Register(req *model.UserRegisterRequest) (*model.UserRespo
 	}
 
 	if err := s.userRepo.Create(user); err != nil {
-		return nil, errors.New("用户创建失败")
+		return nil, fmt.Errorf("用户创建失败: %v", err)
 	}
 
 	response := user.ToResponse()
@@ -102,17 +101,10 @@ func (s *userService) Login(req *model.UserLoginRequest) (*LoginResponse, error)
 		return nil, errors.New("邮箱或密码错误")
 	}
 
-	// 生成JWT token
-	token, err := s.jwtMiddleware.GenerateToken(user)
-	if err != nil {
-		return nil, fmt.Errorf("生成token失败: %v", err)
-	}
-
 	response := user.ToResponse()
 
 	return &LoginResponse{
-		User:  &response,
-		Token: token,
+		User: &response,
 	}, nil
 }
 
@@ -201,15 +193,9 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 	user, err := s.userRepo.GetByGoogleID(googleID)
 	if err == nil {
 		// 用户已存在，直接登录
-		token, err := s.jwtMiddleware.GenerateToken(user)
-		if err != nil {
-			return nil, fmt.Errorf("生成token失败: %v", err)
-		}
-
 		response := user.ToResponse()
 		return &LoginResponse{
-			User:  &response,
-			Token: token,
+			User: &response,
 		}, nil
 	}
 
@@ -247,7 +233,7 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 		Username:  username,
 		Email:     email,
 		AvatarURL: picture,
-		GoogleID:  googleID,
+		GoogleID:  &googleID,
 		LoginType: model.LoginTypeGoogle,
 		// Google用户不需要密码
 	}
@@ -256,16 +242,9 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 		return nil, errors.New("用户创建失败")
 	}
 
-	// 生成JWT token
-	token, err := s.jwtMiddleware.GenerateToken(newUser)
-	if err != nil {
-		return nil, fmt.Errorf("生成token失败: %v", err)
-	}
-
 	response := newUser.ToResponse()
 	return &LoginResponse{
-		User:  &response,
-		Token: token,
+		User: &response,
 	}, nil
 }
 

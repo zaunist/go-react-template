@@ -5,7 +5,7 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 
 # 复制前端项目文件
-COPY web/package.json web/pnpm-lock.yaml ./
+COPY web/package.json
 
 # 安装前端依赖
 RUN npm install -g pnpm && pnpm install

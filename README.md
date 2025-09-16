@@ -19,7 +19,7 @@
 
 - 🚀 **Echo** - 高性能 Web 框架
 - 🗄️ **GORM** - ORM 库，支持 SQLite/PostgreSQL/MySQL
-- 🔐 **JWT** - 身份认证
+- 🔐 **SESSION** - 身份认证
 - 📝 **结构化日志** - 使用 logrus
 - 🔍 **代码质量检查** - golangci-lint 集成
 - 🐳 **Docker** - 容器化部署
@@ -159,7 +159,7 @@ vim .env
 | ---------------- | ----------------- | ---------------- |
 | `SERVER_ADDRESS` | `:1323`           | 服务器监听地址   |
 | `DATABASE_URL`   | `./data.db`       | 数据库连接字符串 |
-| `JWT_SECRET`     | `your-secret-key` | JWT 签名密钥     |
+| `SESSION_SECRET` | `your-secret-key` | SESSION 签名密钥     |
 | `LOG_LEVEL`      | `info`            | 日志级别         |
 
 
@@ -235,7 +235,7 @@ make docker-down    # 使用 docker-compose 停止
    # 运行容器
    docker run -d -p 1323:1323 \
      -e DATABASE_URL="/app/data/data.db" \
-     -e JWT_SECRET="your-production-secret" \
+     -e SESSION_SECRET="your-secret-key" \
      -v $(pwd)/data:/app/data \
      go-react-template
    ```

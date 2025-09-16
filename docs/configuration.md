@@ -57,10 +57,10 @@ DB_NAME=go_react_template
 DB_SSLMODE=disable
 ```
 
-#### JWT配置
+#### SESSION 配置
 
-- `JWT_SECRET`: JWT签名密钥（生产环境必须修改）
-- `JWT_EXPIRE_HOUR`: JWT过期时间（小时，默认: 24）
+- `SESSION_SECRET`: SESSION 签名密钥（生产环境必须修改）
+- `SESSION_EXPIRE_HOUR`: SESSION 过期时间（小时，默认: 24）
 
 ## 使用方式
 
@@ -92,7 +92,7 @@ export DB_DRIVER=mysql
 export DB_HOST=your-db-host
 export DB_USERNAME=your-username
 export DB_PASSWORD=your-password
-export JWT_SECRET=your-super-secret-key
+export SESSION_SECRET=your-secret-key
 ./server
 ```
 
@@ -102,7 +102,7 @@ export JWT_SECRET=your-super-secret-key
 ENV SERVER_PORT=8080
 ENV DB_DRIVER=postgres
 ENV DB_HOST=postgres-service
-ENV JWT_SECRET=your-production-secret
+ENV SESSION_SECRET=your-secret-key
 ```
 
 ## 配置验证
@@ -118,7 +118,7 @@ ENV JWT_SECRET=your-production-secret
 
 ## 安全建议
 
-1. **生产环境必须修改 JWT_SECRET**
+1. **生产环境必须修改 SESSION_SECRET**
 2. **不要将 `.env` 文件提交到版本控制系统**
 3. **使用强密码和复杂的密钥**
 4. **定期轮换密钥**

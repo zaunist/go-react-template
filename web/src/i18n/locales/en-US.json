@@ -165,7 +165,7 @@
             "echo": "Lightweight, high-performance web framework",
             "gorm": "Powerful Go ORM library",
             "sqlite": "Lightweight embedded database",
-            "jwt": "Secure user authentication mechanism",
+            "session": "Secure user authentication mechanism",
             "bcrypt": "Password encryption storage"
           },
           "frontend": {
@@ -184,7 +184,7 @@
           "auth": {
             "title": "User Authentication System",
             "register": "User registration and login",
-            "jwt": "JWT Token authentication",
+            "session": "Session authentication",
             "password": "Secure password encryption",
             "auto": "Automatic login state management"
           },
@@ -246,7 +246,7 @@
     "highPerformance": "High Performance Architecture",
     "highPerformanceDesc": "Echo Framework + GORM + SQLite",
     "completeAuth": "Complete Authentication System",
-    "completeAuthDesc": "JWT + bcrypt + State Management",
+    "completeAuthDesc": "Session + bcrypt + State Management",
     "i18nSupport": "Internationalization Support",
     "i18nSupportDesc": "Multi-language switching + Responsive design",
     "builtWith": "Built with Go + Echo + React + TypeScript",

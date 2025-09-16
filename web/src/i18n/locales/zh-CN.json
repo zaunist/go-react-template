@@ -29,7 +29,7 @@
     "highPerformance": "高性能架构",
     "highPerformanceDesc": "Echo 框架 + GORM + SQLite",
     "completeAuth": "完整认证系统",
-    "completeAuthDesc": "JWT + bcrypt + 状态管理",
+    "completeAuthDesc": "Session + bcrypt + 状态管理",
     "i18nSupport": "国际化支持",
     "i18nSupportDesc": "多语言切换 + 响应式设计",
     "builtWith": "基于 Go + Echo + React + TypeScript 构建",
@@ -181,7 +181,7 @@
             "echo": "轻量级、高性能的 Web 框架",
             "gorm": "功能强大的 Go ORM 库",
             "sqlite": "轻量级嵌入式数据库",
-            "jwt": "安全的用户认证机制",
+            "session": "安全的用户认证机制",
             "bcrypt": "密码加密存储"
           },
           "frontend": {
@@ -200,7 +200,7 @@
           "auth": {
             "title": "用户认证系统",
             "register": "用户注册和登录",
-            "jwt": "JWT Token 认证",
+            "session": "Session 认证",
             "password": "密码安全加密",
             "auto": "自动登录状态管理"
           },

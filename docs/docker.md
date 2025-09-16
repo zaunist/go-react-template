@@ -46,7 +46,7 @@ docker run -d \
   -e SERVER_PORT=8080 \
   -e DATABASE_DRIVER=sqlite \
   -e DATABASE_DSN=./data.db \
-  -e JWT_SECRET=your-jwt-secret-key \
+  -e SESSION_SECRET=your-secret-key \
   -v $(pwd)/data:/app/data \
   go-react-app
 ```
@@ -87,11 +87,11 @@ docker-compose down
 | `DATABASE_DRIVER` | `sqlite` | 数据库驱动 (sqlite/mysql/postgres) |
 | `DATABASE_DSN` | `./data.db` | 数据库连接字符串 |
 
-### JWT 配置
+### SESSION 配置
 
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
-| `JWT_SECRET` | `your-jwt-secret-key` | JWT 签名密钥 |
+| `SESSION_SECRET` | `your-secret-key` | SESSION 签名密钥 |
 
 ## 🗄️ 数据持久化
 
@@ -219,7 +219,7 @@ docker run -it --rm \
 
 1. **更改默认密钥**
    ```bash
-   # 生成随机 JWT 密钥
+   # 生成随机 SESSION 密钥
    openssl rand -base64 32
    ```
 
@@ -252,7 +252,7 @@ services:
           memory: 256M
           cpus: '0.5'
     environment:
-      - JWT_SECRET=${JWT_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET}
       - DATABASE_DSN=${DATABASE_DSN}
 ```
 

@@ -23,7 +23,7 @@
 - **Web 框架**: Echo v4
 - **ORM**: Gorm
 - **数据库**: SQLite/MySQL/PostgreSQL (多数据库支持)
-- **身份认证**: JWT (golang-jwt/jwt)
+- **身份认证**: Session
 - **密码加密**: bcrypt
 - **第三方登录**: Google OAuth2
 - **配置管理**: godotenv
@@ -272,17 +272,11 @@ func (h *UserHandler) Register(c echo.Context) error {
 
 #### 4.3.2 身份认证与授权
 
-- **JWT 认证**：使用 `golang-jwt/jwt/v5` 库实现 JWT 认证
+- **SESSION 认证**：使用 `gorilla/sessions` 库实现 SESSION 认证
 - **密码安全**：使用 `bcrypt` 进行密码哈希，成本因子设为默认值
 - **Token 管理**：设置合理的过期时间（默认 24 小时），支持 token 刷新
 - **第三方登录**：支持 Google OAuth2 登录，安全处理用户信息
-- **中间件保护**：使用 JWT 中间件保护需要认证的路由
-
-```go
-// JWT 中间件使用示例
-protected := api.Group("", middleware.JWT())
-protected.GET("/profile", userHandler.GetProfile)
-```
+- **中间件保护**：使用 SESSION 中间件保护需要认证的路由
 
 ### 4.4 性能优化
 

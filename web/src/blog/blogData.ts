@@ -1,5 +1,5 @@
 // 博客数据管理
-import type { TFunction } from 'i18next';
+import type { TFunction } from "i18next";
 
 // 博客文章类型定义
 export interface BlogPost {
@@ -33,20 +33,28 @@ ${t("blog.samplePost.content.intro.description")}
 
 ### ${t("blog.samplePost.content.techStack.backend.title")}
 
-- **Go ${t("common.language")?.toLowerCase() || "语言"}: ${t("blog.samplePost.content.techStack.backend.go")}
-- **Echo ${t("common.framework")?.toLowerCase() || "框架"}: ${t("blog.samplePost.content.techStack.backend.echo")}
+- **Go ${t("common.language")?.toLowerCase() || "语言"}: ${t(
+    "blog.samplePost.content.techStack.backend.go"
+  )}
+- **Echo ${t("common.framework")?.toLowerCase() || "框架"}: ${t(
+    "blog.samplePost.content.techStack.backend.echo"
+  )}
 - **GORM**: ${t("blog.samplePost.content.techStack.backend.gorm")}
 - **SQLite**: ${t("blog.samplePost.content.techStack.backend.sqlite")}
-- **JWT**: ${t("blog.samplePost.content.techStack.backend.jwt")}
+- **Session**: ${t("blog.samplePost.content.techStack.backend.session")}
 - **bcrypt**: ${t("blog.samplePost.content.techStack.backend.bcrypt")}
 
 ### ${t("blog.samplePost.content.techStack.frontend.title")}
 
 - **React 19+**: ${t("blog.samplePost.content.techStack.frontend.react")}
 - **TypeScript**: ${t("blog.samplePost.content.techStack.frontend.typescript")}
-- **TailwindCSS v4+**: ${t("blog.samplePost.content.techStack.frontend.tailwind")}
+- **TailwindCSS v4+**: ${t(
+    "blog.samplePost.content.techStack.frontend.tailwind"
+  )}
 - **Zustand**: ${t("blog.samplePost.content.techStack.frontend.zustand")}
-- **React Router DOM**: ${t("blog.samplePost.content.techStack.frontend.router")}
+- **React Router DOM**: ${t(
+    "blog.samplePost.content.techStack.frontend.router"
+  )}
 - **shadcn/ui**: ${t("blog.samplePost.content.techStack.frontend.shadcn")}
 - **i18next**: ${t("blog.samplePost.content.techStack.frontend.i18next")}
 
@@ -55,7 +63,7 @@ ${t("blog.samplePost.content.intro.description")}
 ### 1. ${t("blog.samplePost.content.features.auth.title")}
 
 - ${t("blog.samplePost.content.features.auth.register")}
-- ${t("blog.samplePost.content.features.auth.jwt")}
+- ${t("blog.samplePost.content.features.auth.session")}
 - ${t("blog.samplePost.content.features.auth.password")}
 - ${t("blog.samplePost.content.features.auth.auto")}
 
@@ -83,9 +91,15 @@ ${t("blog.samplePost.content.intro.description")}
 
 ${t("blog.samplePost.content.structure.description")}
 
-- **${t("common.backend")?.toLowerCase() || "后端"}: ${t("blog.samplePost.content.structure.backend")}
-- **${t("common.frontend")?.toLowerCase() || "前端"}: ${t("blog.samplePost.content.structure.frontend")}
-- **${t("common.config")?.toLowerCase() || "配置"}: ${t("blog.samplePost.content.structure.config")}
+- **${t("common.backend")?.toLowerCase() || "后端"}: ${t(
+    "blog.samplePost.content.structure.backend"
+  )}
+- **${t("common.frontend")?.toLowerCase() || "前端"}: ${t(
+    "blog.samplePost.content.structure.frontend"
+  )}
+- **${t("common.config")?.toLowerCase() || "配置"}: ${t(
+    "blog.samplePost.content.structure.config"
+  )}
 
 ## ${t("blog.samplePost.content.quickStart.title")}
 
@@ -128,7 +142,10 @@ export const getBlogPosts = (t: TFunction): BlogPost[] => [
 ];
 
 // 根据ID获取特定博客文章
-export const getBlogPostById = (id: number, t: TFunction): BlogPost | undefined => {
+export const getBlogPostById = (
+  id: number,
+  t: TFunction
+): BlogPost | undefined => {
   const posts = getBlogPosts(t);
-  return posts.find(post => post.id === id);
+  return posts.find((post) => post.id === id);
 };

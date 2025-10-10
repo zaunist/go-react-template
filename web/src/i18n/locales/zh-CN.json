@@ -107,7 +107,6 @@
   },
   "nav": {
     "home": "首页",
-    "blog": "博客",
     "dashboard": "仪表板",
     "profile": "个人资料",
     "settings": "设置",
@@ -122,7 +121,6 @@
     "api": "API",
     "company": "公司",
     "about": "关于我们",
-    "blog": "博客",
     "careers": "招聘",
     "contact": "联系我们",
     "support": "支持",
@@ -150,106 +148,5 @@
     "switchTo": "切换到",
     "chinese": "中文",
     "english": "English"
-  },
-  "blog": {
-    "title": "技术博客",
-    "subtitle": "分享技术见解，探索开发实践",
-    "readMore": "阅读全文",
-    "readTime": "分钟",
-    "views": "次阅读",
-    "author": "作者信息",
-    "tableOfContents": "文章目录",
-    "category": "分类",
-    "tags": "标签",
-    "visitHomepage": "访问主页",
-    "updateStatus": "持续更新中，敬请期待更多精彩内容",
-    "systemStatus": "博客系统运行正常",
-    "samplePost": {
-      "title": "Go React Template - 现代化全栈开发模板",
-      "excerpt": "一个集成了 Go + Echo + React + TypeScript 的现代化全栈开发模板，提供完整的用户认证系统、国际化支持和优雅的 UI 设计。",
-      "content": {
-        "heading": "Go React Template - 现代化全栈开发模板",
-        "intro": {
-          "title": "项目简介",
-          "description": "Go React Template 是一个现代化的全栈开发模板，旨在为开发者提供一个快速启动项目的基础架构。该模板集成了当前最流行和稳定的技术栈，包括后端的 Go + Echo 框架和前端的 React + TypeScript，为构建高性能、可维护的 Web 应用提供了坚实的基础。"
-        },
-        "techStack": {
-          "title": "技术栈特色",
-          "backend": {
-            "title": "后端技术",
-            "go": "高性能、并发友好的现代编程语言",
-            "echo": "轻量级、高性能的 Web 框架",
-            "gorm": "功能强大的 Go ORM 库",
-            "sqlite": "轻量级嵌入式数据库",
-            "session": "安全的用户认证机制",
-            "bcrypt": "密码加密存储"
-          },
-          "frontend": {
-            "title": "前端技术",
-            "react": "最新版本的 React 框架",
-            "typescript": "类型安全的 JavaScript 超集",
-            "tailwind": "原子化 CSS 框架",
-            "zustand": "轻量级状态管理库",
-            "router": "前端路由管理",
-            "shadcn": "现代化 UI 组件库",
-            "i18next": "国际化支持"
-          }
-        },
-        "features": {
-          "title": "核心功能",
-          "auth": {
-            "title": "用户认证系统",
-            "register": "用户注册和登录",
-            "session": "Session 认证",
-            "password": "密码安全加密",
-            "auto": "自动登录状态管理"
-          },
-          "i18n": {
-            "title": "国际化支持",
-            "switch": "多语言切换",
-            "dynamic": "动态语言加载",
-            "responsive": "响应式设计适配"
-          },
-          "ui": {
-            "title": "现代化 UI 设计",
-            "theme": "小清新渐变主题",
-            "glass": "毛玻璃效果",
-            "background": "动态流光背景",
-            "layout": "响应式布局"
-          },
-          "dev": {
-            "title": "开发体验优化",
-            "hotReload": "热重载开发环境",
-            "typescript": "TypeScript 类型检查",
-            "eslint": "ESLint 代码规范",
-            "build": "自动化构建流程"
-          }
-        },
-        "structure": {
-          "title": "项目结构",
-          "description": "项目采用清晰的分层架构：",
-          "backend": "按功能模块组织，包含 handler、service、repository 等层次",
-          "frontend": "组件化开发，页面、组件、工具函数分离",
-          "config": "统一的配置管理和环境变量"
-        },
-        "quickStart": {
-          "title": "快速开始",
-          "step1": "克隆项目",
-          "step2": "安装依赖",
-          "step3": "启动开发服务器",
-          "step4": "开始开发",
-          "description": "这个模板为现代 Web 应用开发提供了一个优秀的起点，无论是个人项目还是企业级应用都能快速上手。"
-        },
-        "conclusion": {
-          "title": "总结",
-          "description": "Go React Template 不仅提供了完整的技术栈集成，更重要的是为开发者提供了最佳实践的参考。通过使用这个模板，开发者可以快速构建出高质量、可维护的现代化 Web 应用。"
-        }
-      },
-      "author": {
-        "bio": "Full Stack Developer"
-      },
-      "readTime": "8 分钟",
-      "category": "技术分享"
-    }
   }
 }

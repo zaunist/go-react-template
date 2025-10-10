@@ -10,7 +10,7 @@ export default function TermsPage() {
         {/* 动态流光效果 */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200/30 via-amber-200/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-l from-yellow-200/25 via-orange-100/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
-        
+
         {/* 微噪点效果 */}
         <div
           className="absolute inset-0 opacity-[0.02]"
@@ -28,7 +28,7 @@ export default function TermsPage() {
                 </defs>
                 <rect width='100' height='100' fill='url(%23noise)'/>
               </svg>
-            `)}`
+            `)}`,
           }}
         />
       </div>
@@ -54,21 +54,25 @@ export default function TermsPage() {
             服务条款
           </h1>
           <p className="text-gray-600 text-lg">
-            最后更新时间：{new Date().toLocaleDateString('zh-CN')}
+            最后更新时间：{new Date().toLocaleDateString("zh-CN")}
           </p>
         </div>
 
         {/* 内容区域 */}
         <div className="prose prose-invert prose-lg max-w-none">
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">1. 服务条款的接受</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              1. 服务条款的接受
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               通过访问和使用本网站及其服务，您同意遵守并受本服务条款的约束。如果您不同意这些条款，请不要使用我们的服务。
             </p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">2. 服务描述</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              2. 服务描述
+            </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               Go-React Template 是一个现代化的全栈开发模板，提供以下服务：
             </p>
@@ -81,7 +85,9 @@ export default function TermsPage() {
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">3. 用户责任</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              3. 用户责任
+            </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               作为用户，您同意：
             </p>
@@ -95,41 +101,49 @@ export default function TermsPage() {
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">4. 知识产权</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              4. 知识产权
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               本网站及其内容（包括但不限于文本、图像、代码、设计）受版权法和其他知识产权法保护。未经明确授权，您不得复制、修改、分发或以其他方式使用这些内容。
             </p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">5. 服务可用性</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              5. 服务可用性
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               我们努力确保服务的持续可用性，但不保证服务不会中断。我们可能因维护、更新或其他原因暂时中断服务，并会尽力提前通知用户。
             </p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">6. 免责声明</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              6. 免责声明
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               本服务按"现状"提供，我们不对服务的准确性、完整性或可靠性做出任何明示或暗示的保证。在法律允许的最大范围内，我们不承担任何直接、间接、偶然或后果性损害的责任。
             </p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">7. 条款修改</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              7. 条款修改
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               我们保留随时修改这些服务条款的权利。重大变更将通过网站公告或电子邮件通知用户。继续使用服务即表示您接受修改后的条款。
             </p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">8. 联系信息</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              8. 联系信息
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               如果您对这些服务条款有任何疑问，请联系我们：
             </p>
-            <p className="text-gray-700 mt-4">
-              邮箱：y.bz@foxmail.com
-            </p>
+            <p className="text-gray-700 mt-4">邮箱：y.bz@foxmail.com</p>
           </div>
         </div>
       </div>

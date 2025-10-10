@@ -50,13 +50,13 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100 text-gray-800 font-sans overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-200 font-sans overflow-hidden relative">
       {/* 背景装饰 */}
       <div className="absolute inset-0 overflow-hidden">
         {/* 动态流光效果 */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200/30 via-amber-200/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-l from-yellow-200/25 via-orange-100/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-amber-100/20 via-orange-50/30 to-yellow-100/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200/30 via-amber-200/20 to-transparent dark:from-blue-900/20 dark:via-purple-900/20 dark:to-transparent rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-l from-yellow-200/25 via-orange-100/20 to-transparent dark:from-purple-900/25 dark:from-blue-900/20 dark:to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-amber-100/20 via-orange-50/30 to-yellow-100/20 dark:from-indigo-900/20 dark:via-purple-900/30 dark:to-blue-900/20 rounded-full blur-3xl animate-pulse delay-500"></div>
 
         {/* 微噪点效果 */}
         <div
@@ -76,6 +76,16 @@ export default function HomePage() {
             backgroundSize: "50px 50px",
           }}
         ></div>
+
+        {/* 暗色主题网格 */}
+        <div
+          className="absolute inset-0 opacity-[0.03] hidden dark:block"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(100, 116, 139, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(100, 116, 139, 0.1) 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
+          }}
+        ></div>
       </div>
 
       {/* 主要内容 */}
@@ -91,7 +101,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed font-medium">
+          <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed font-medium">
             {t("home.subtitle")}
           </p>
 
@@ -113,7 +123,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-orange-200 bg-white/80 backdrop-blur-md text-orange-600 hover:bg-orange-50/80 hover:border-orange-300 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-100/50 px-8 py-4 text-lg font-medium"
+                className="border-orange-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-slate-700/80 hover:border-orange-300 dark:hover:border-slate-500 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-100/50 dark:hover:shadow-slate-700/50 px-8 py-4 text-lg font-medium"
               >
                 {t("home.learnMore")}
               </Button>
@@ -137,12 +147,12 @@ export default function HomePage() {
                   <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Icon className={`w-6 h-6 ${feature.iconColor}`} />
                   </div>
-                  <CardTitle className="text-gray-800 text-lg font-semibold">
+                  <CardTitle className="text-gray-800 dark:text-gray-200 text-lg font-semibold">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="relative z-10">
-                  <CardDescription className="text-gray-600 leading-relaxed font-medium">
+                  <CardDescription className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -156,12 +166,12 @@ export default function HomePage() {
 
         {/* 底部信息 */}
         <div className="mt-20 text-center">
-          <p className="text-gray-500 text-sm font-medium">
+          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
             {t("home.builtWith")}
           </p>
           <div className="flex items-center justify-center gap-2 mt-2">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-sm shadow-emerald-200"></div>
-            <span className="text-gray-400 text-xs font-medium">
+            <span className="text-gray-400 dark:text-gray-500 text-xs font-medium">
               {t("home.systemStatus")}
             </span>
           </div>

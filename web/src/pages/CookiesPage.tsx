@@ -10,7 +10,7 @@ export default function CookiesPage() {
         {/* 动态流光效果 */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-orange-200/30 via-amber-200/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-l from-yellow-200/25 via-orange-100/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
-        
+
         {/* 微噪点效果 */}
         <div
           className="absolute inset-0 opacity-[0.02]"
@@ -28,7 +28,7 @@ export default function CookiesPage() {
                 </defs>
                 <rect width='100' height='100' fill='url(%23noise)'/>
               </svg>
-            `)}`
+            `)}`,
           }}
         />
       </div>
@@ -54,21 +54,26 @@ export default function CookiesPage() {
             Cookie 政策
           </h1>
           <p className="text-gray-600 text-lg">
-            最后更新时间：{new Date().toLocaleDateString('zh-CN')}
+            最后更新时间：{new Date().toLocaleDateString("zh-CN")}
           </p>
         </div>
 
         {/* 内容区域 */}
         <div className="prose prose-invert prose-lg max-w-none">
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">什么是 Cookie？</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              什么是 Cookie？
+            </h2>
             <p className="text-gray-700 leading-relaxed">
-              Cookie 是当您访问网站时存储在您设备上的小型文本文件。它们被广泛用于使网站工作或更高效地工作，以及向网站所有者提供信息。
+              Cookie
+              是当您访问网站时存储在您设备上的小型文本文件。它们被广泛用于使网站工作或更高效地工作，以及向网站所有者提供信息。
             </p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">我们如何使用 Cookie</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              我们如何使用 Cookie
+            </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               我们使用 Cookie 来：
             </p>
@@ -82,34 +87,48 @@ export default function CookiesPage() {
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Cookie 类型</h2>
-            
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              Cookie 类型
+            </h2>
+
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-medium mb-2 text-gray-800">必要 Cookie</h3>
+                <h3 className="text-xl font-medium mb-2 text-gray-800">
+                  必要 Cookie
+                </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  这些 Cookie 对于网站的基本功能是必需的，包括用户身份验证和安全功能。没有这些 Cookie，网站无法正常运行。
+                  这些 Cookie
+                  对于网站的基本功能是必需的，包括用户身份验证和安全功能。没有这些
+                  Cookie，网站无法正常运行。
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="text-xl font-medium mb-2 text-gray-800">功能性 Cookie</h3>
+                <h3 className="text-xl font-medium mb-2 text-gray-800">
+                  功能性 Cookie
+                </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  这些 Cookie 允许网站记住您的选择（如用户名、语言或地区），并提供增强的个性化功能。
+                  这些 Cookie
+                  允许网站记住您的选择（如用户名、语言或地区），并提供增强的个性化功能。
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="text-xl font-medium mb-2 text-gray-800">分析 Cookie</h3>
+                <h3 className="text-xl font-medium mb-2 text-gray-800">
+                  分析 Cookie
+                </h3>
                 <p className="text-gray-700 leading-relaxed">
-                  这些 Cookie 帮助我们了解访问者如何与网站互动，通过匿名收集和报告信息来改善网站性能。
+                  这些 Cookie
+                  帮助我们了解访问者如何与网站互动，通过匿名收集和报告信息来改善网站性能。
                 </p>
               </div>
             </div>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">第三方 Cookie</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              第三方 Cookie
+            </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               我们可能使用第三方服务，这些服务也会设置 Cookie：
             </p>
@@ -121,7 +140,9 @@ export default function CookiesPage() {
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">管理 Cookie</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              管理 Cookie
+            </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               您可以通过以下方式控制和管理 Cookie：
             </p>
@@ -137,25 +158,33 @@ export default function CookiesPage() {
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Cookie 保留期</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              Cookie 保留期
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               不同类型的 Cookie 有不同的保留期：
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4 mt-4">
-              <li><strong>会话 Cookie</strong>：在您关闭浏览器时自动删除</li>
-              <li><strong>持久 Cookie</strong>：在设定的到期日期或您手动删除时删除</li>
-              <li><strong>身份验证 Cookie</strong>：通常在 30 天后过期</li>
+              <li>
+                <strong>会话 Cookie</strong>：在您关闭浏览器时自动删除
+              </li>
+              <li>
+                <strong>持久 Cookie</strong>：在设定的到期日期或您手动删除时删除
+              </li>
+              <li>
+                <strong>身份验证 Cookie</strong>：通常在 30 天后过期
+              </li>
             </ul>
           </div>
 
           <div className="bg-white/60 backdrop-blur-sm border border-orange-200/50 rounded-lg p-8 shadow-lg shadow-orange-100/50">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">联系我们</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              联系我们
+            </h2>
             <p className="text-gray-700 leading-relaxed">
               如果您对我们的 Cookie 政策有任何疑问，请联系我们：
             </p>
-            <p className="text-gray-700 mt-4">
-              邮箱：y.bz@foxmail.com
-            </p>
+            <p className="text-gray-700 mt-4">邮箱：y.bz@foxmail.com</p>
           </div>
         </div>
       </div>

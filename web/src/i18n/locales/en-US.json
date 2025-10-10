@@ -91,7 +91,6 @@
   },
   "nav": {
     "home": "Home",
-    "blog": "Blog",
     "dashboard": "Dashboard",
     "profile": "Profile",
     "settings": "Settings",
@@ -106,7 +105,6 @@
     "api": "API",
     "company": "Company",
     "about": "About",
-    "blog": "Blog",
     "careers": "Careers",
     "contact": "Contact",
     "support": "Support",
@@ -134,107 +132,6 @@
     "switchTo": "Switch to",
     "chinese": "中文",
     "english": "English"
-  },
-  "blog": {
-    "title": "Tech Blog",
-    "subtitle": "Share technical insights and explore development practices",
-    "readMore": "Read More",
-    "readTime": "min read",
-    "views": "views",
-    "author": "Author Info",
-    "tableOfContents": "Table of Contents",
-    "category": "Category",
-    "tags": "Tags",
-    "visitHomepage": "Visit Homepage",
-    "updateStatus": "Continuously updating, stay tuned for more exciting content",
-    "systemStatus": "Blog system running normally",
-    "samplePost": {
-      "title": "Go React Template - Modern Full-Stack Development Template",
-      "excerpt": "A modern full-stack development template integrating Go + Echo + React + TypeScript, providing complete user authentication system, internationalization support, and elegant UI design.",
-      "content": {
-        "heading": "Go React Template - Modern Full-Stack Development Template",
-        "intro": {
-          "title": "Project Overview",
-          "description": "Go React Template is a modern full-stack development template designed to provide developers with a foundational architecture for quickly starting projects. This template integrates the most popular and stable technology stacks, including Go + Echo framework for the backend and React + TypeScript for the frontend, providing a solid foundation for building high-performance, maintainable web applications."
-        },
-        "techStack": {
-          "title": "Technology Stack Features",
-          "backend": {
-            "title": "Backend Technologies",
-            "go": "High-performance, concurrency-friendly modern programming language",
-            "echo": "Lightweight, high-performance web framework",
-            "gorm": "Powerful Go ORM library",
-            "sqlite": "Lightweight embedded database",
-            "session": "Secure user authentication mechanism",
-            "bcrypt": "Password encryption storage"
-          },
-          "frontend": {
-            "title": "Frontend Technologies",
-            "react": "Latest version of React framework",
-            "typescript": "Type-safe JavaScript superset",
-            "tailwind": "Atomic CSS framework",
-            "zustand": "Lightweight state management library",
-            "router": "Frontend routing management",
-            "shadcn": "Modern UI component library",
-            "i18next": "Internationalization support"
-          }
-        },
-        "features": {
-          "title": "Core Features",
-          "auth": {
-            "title": "User Authentication System",
-            "register": "User registration and login",
-            "session": "Session authentication",
-            "password": "Secure password encryption",
-            "auto": "Automatic login state management"
-          },
-          "i18n": {
-            "title": "Internationalization Support",
-            "switch": "Multi-language switching",
-            "dynamic": "Dynamic language loading",
-            "responsive": "Responsive design adaptation"
-          },
-          "ui": {
-            "title": "Modern UI Design",
-            "theme": "Fresh gradient theme",
-            "glass": "Glassmorphism effects",
-            "background": "Dynamic flowing background",
-            "layout": "Responsive layout"
-          },
-          "dev": {
-            "title": "Development Experience Optimization",
-            "hotReload": "Hot reload development environment",
-            "typescript": "TypeScript type checking",
-            "eslint": "ESLint code standards",
-            "build": "Automated build process"
-          }
-        },
-        "structure": {
-          "title": "Project Structure",
-          "description": "The project adopts a clear layered architecture:",
-          "backend": "Organized by functional modules, including handler, service, repository layers",
-          "frontend": "Component-based development with separation of pages, components, and utility functions",
-          "config": "Unified configuration management and environment variables"
-        },
-        "quickStart": {
-          "title": "Quick Start",
-          "step1": "Clone the project",
-          "step2": "Install dependencies",
-          "step3": "Start development server",
-          "step4": "Begin development",
-          "description": "This template provides an excellent starting point for modern web application development, suitable for both personal projects and enterprise-level applications."
-        },
-        "conclusion": {
-          "title": "Conclusion",
-          "description": "Go React Template not only provides complete technology stack integration, but more importantly, offers developers a reference for best practices. By using this template, developers can quickly build high-quality, maintainable modern web applications."
-        }
-      },
-      "author": {
-        "bio": "Full Stack Developer"
-      },
-      "readTime": "8 min read",
-      "category": "Tech Sharing"
-    }
   },
   "home": {
     "getStarted": "Get Started",

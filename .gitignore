@@ -1,6 +1,7 @@
 # 构建产物和静态文件
 /web/node_modules
 /web/dist
+/web/false
 /static
 server
 app

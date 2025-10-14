@@ -102,10 +102,12 @@
     │   ├── api/           # API 调用
     │   ├── assets/        # 前端资源
     │   ├── components/    # 可复用组件
+    │   ├── i18n/          # 国际化文件
     │   ├── lib/           # 工具函数
     │   ├── pages/         # 页面级组件
     │   ├── router/        # 路由配置
-    │   └── store/         # Zustand store
+    │   ├── store/         # Zustand store
+    │   └── style.css      # 全局样式和主题配置
     ├── components.json    # shadcn/ui 配置
     ├── package.json       # 前端依赖
     ├── tsconfig.json      # TypeScript 配置
@@ -532,7 +534,6 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
-import BlogPage from "../pages/BlogPage";
 
 // 受保护的路由组件
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -565,10 +566,6 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
-      },
-      {
-        path: "blog",
-        element: <BlogPage />,
       },
       {
         path: "dashboard",
@@ -619,6 +616,7 @@ export const router = createBrowserRouter([
 - **原子化优先**：优先使用 Tailwind 工具类
 - **组件样式**：复杂样式使用 `@apply` 或 CSS-in-JS
 - **主题定制**：TailwindCSS v4+ 使用 CSS 变量进行主题定制，无需配置文件
+- **主题切换**：使用 next-themes 库实现暗黑/明亮主题切换
 
 #### 5.4.2 响应式设计
 
@@ -652,6 +650,142 @@ export const getButtonClasses = (variant: keyof typeof buttonVariants) => {
     buttonVariants[variant]
   );
 };
+```
+
+#### 5.4.4 主题系统规范
+
+项目使用 next-themes 库实现主题切换功能，支持明亮和暗黑两种主题模式：
+
+**主题配置原则：**
+- **颜色系统**：使用 HSL 色彩空间定义颜色变量
+- **主题变量**：在 `src/style.css` 中定义 CSS 自定义属性
+- **暗黑模式**：使用 `dark` 类名切换，通过 TailwindCSS 的 `dark:` 前缀应用样式
+- **一致性**：所有组件必须同时支持明亮和暗黑主题
+
+**主题实现模板：**
+
+```css
+/* src/style.css */
+:root {
+  /* 明亮主题颜色 */
+  --background: 0 0% 100%;           /* 背景色 */
+  --foreground: 25 84% 30%;          /* 前景色 */
+  --card: 0 0% 100%;                 /* 卡片背景 */
+  --card-foreground: 25 84% 30%;     /* 卡片前景 */
+  --primary: 25 84% 45%;             /* 主色调 */
+  --primary-foreground: 0 0% 100%;   /* 主色前景 */
+  --secondary: 38 92% 96%;           /* 次要色 */
+  --secondary-foreground: 25 84% 30%; /* 次要色前景 */
+  --muted: 38 92% 96%;               /* 静音色 */
+  --muted-foreground: 25 54% 50%;    /* 静音色前景 */
+  --accent: 38 92% 96%;              /* 强调色 */
+  --accent-foreground: 25 84% 30%;   /* 强调色前景 */
+  --destructive: 0 84% 60%;         /* 危险色 */
+  --destructive-foreground: 0 0% 100%; /* 危险色前景 */
+  --border: 38 92% 90%;              /* 边框色 */
+  --input: 38 92% 90%;               /* 输入框边框 */
+  --ring: 25 84% 45%;                /* 焦点环 */
+}
+
+.dark {
+  /* 暗黑主题颜色 */
+  --background: 215 28% 17%;         /* 背景色 */
+  --foreground: 38 92% 90%;          /* 前景色 */
+  --card: 215 28% 17%;               /* 卡片背景 */
+  --card-foreground: 38 92% 90%;     /* 卡片前景 */
+  --primary: 25 84% 65%;             /* 主色调 */
+  --primary-foreground: 215 28% 17%; /* 主色前景 */
+  --secondary: 215 28% 23%;          /* 次要色 */
+  --secondary-foreground: 38 92% 90%; /* 次要色前景 */
+  --muted: 215 28% 23%;              /* 静音色 */
+  --muted-foreground: 38 92% 60%;    /* 静音色前景 */
+  --accent: 215 28% 23%;             /* 强调色 */
+  --accent-foreground: 38 92% 90%;   /* 强调色前景 */
+  --destructive: 0 62% 30%;         /* 危险色 */
+  --destructive-foreground: 38 92% 90%; /* 危险色前景 */
+  --border: 215 28% 23%;             /* 边框色 */
+  --input: 215 28% 23%;              /* 输入框边框 */
+  --ring: 25 84% 65%;                /* 焦点环 */
+}
+```
+
+**主题切换组件实现：**
+
+```typescript
+// components/ThemeToggle.tsx
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+
+export const ThemeToggle: React.FC = () => {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      className="h-9 w-9"
+    >
+      <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">切换主题</span>
+    </Button>
+  );
+};
+```
+
+**组件主题适配规范：**
+
+```typescript
+// 组件主题适配示例
+export const ThemedCard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-6 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+        标题
+      </h2>
+      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+        {children}
+      </p>
+    </div>
+  );
+};
+```
+
+**主题开发最佳实践：**
+
+1. **颜色对比度**：确保文本在两种主题下都有足够的对比度
+2. **一致性**：使用相同的颜色变量命名规范
+3. **渐进增强**：优先实现明亮主题，再添加暗黑主题支持
+4. **测试验证**：在两种主题下测试所有组件的显示效果
+5. **用户体验**：主题切换应该平滑过渡，避免闪烁
+
+**TailwindCSS v4 主题配置：**
+
+```css
+/* 使用 @theme 指令定义主题变量 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* 定义暗黑模式变体 */
+@custom-variant dark (&:is(.dark *));
 ```
 
 ### 5.5 组件开发规范

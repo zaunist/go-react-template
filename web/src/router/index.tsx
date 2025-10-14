@@ -1,6 +1,6 @@
 // 路由配置
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { Layout, SimpleLayout } from "../components/layout";
+import { Layout } from "../components/layout";
 import { useAuthStore } from "../store/authStore";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
@@ -62,12 +62,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-    ],
-  },
-  {
-    path: "/",
-    element: <SimpleLayout />,
-    children: [
       {
         path: "login",
         element: (

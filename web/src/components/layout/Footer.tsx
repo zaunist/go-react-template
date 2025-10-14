@@ -21,7 +21,6 @@ export const Footer: React.FC = () => {
       title: t("footer.company"),
       links: [
         { label: t("footer.about"), href: "#about" },
-        { label: t("footer.blog"), href: "#blog" },
         { label: t("footer.careers"), href: "#careers" },
         { label: t("footer.contact"), href: "#contact" },
       ],
@@ -56,7 +55,7 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-t from-orange-50 via-white to-orange-100 border-t border-orange-200/50">
+    <footer className="relative bg-gradient-to-t from-orange-50 via-white to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border-t border-orange-200/50 dark:border-slate-700/50">
       {/* 背景装饰 */}
       <div
         className="absolute inset-0 opacity-40"
@@ -89,15 +88,19 @@ export const Footer: React.FC = () => {
             <div className="lg:col-span-2">
               <Link
                 to="/"
-                className="flex items-center space-x-2 text-slate-800 hover:text-slate-600 transition-colors duration-300 mb-4"
+                className="flex items-center space-x-2 text-slate-800 dark:text-slate-200 hover:text-slate-600 dark:hover:text-slate-400 transition-colors duration-300 mb-4"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center border border-slate-300/50 shadow-sm">
-                  <span className="text-sm font-bold text-slate-700">GT</span>
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-lg flex items-center justify-center border border-slate-300/50 dark:border-slate-600/50 shadow-sm">
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                    GT
+                  </span>
                 </div>
-                <span className="font-semibold text-lg">Go-React Template</span>
+                <span className="font-semibold text-lg dark:text-slate-200">
+                  Go-React Template
+                </span>
               </Link>
 
-              <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-md">
+              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 max-w-md">
                 {t("footer.description")}
               </p>
 
@@ -109,7 +112,7 @@ export const Footer: React.FC = () => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-slate-100/50 hover:bg-slate-200/50 border border-slate-300/50 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-700 transition-all duration-300 hover:scale-105 shadow-sm"
+                    className="w-10 h-10 bg-slate-100/50 dark:bg-slate-700/50 hover:bg-slate-200/50 dark:hover:bg-slate-600/50 border border-slate-300/50 dark:border-slate-600/50 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all duration-300 hover:scale-105 shadow-sm"
                     aria-label={label}
                   >
                     <Icon className="w-5 h-5" />
@@ -121,13 +124,15 @@ export const Footer: React.FC = () => {
             {/* 链接列 */}
             {footerLinks.map(({ title, links }) => (
               <div key={title}>
-                <h3 className="font-semibold text-slate-900 mb-3">{title}</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                  {title}
+                </h3>
                 <ul className="space-y-3">
                   {links.map(({ label, href }) => (
                     <li key={label}>
                       <a
                         href={href}
-                        className="text-slate-600 hover:text-slate-900 transition-colors duration-300 text-sm hover:underline underline-offset-2"
+                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-300 text-sm hover:underline underline-offset-2"
                       >
                         {label}
                       </a>
@@ -140,12 +145,12 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* 分割线 */}
-        <div className="border-t border-slate-200/50"></div>
+        <div className="border-t border-slate-200/50 dark:border-slate-700/50"></div>
 
         {/* 底部信息 */}
         <div className="py-6">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-4 text-sm text-slate-600">
+            <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
               <span>© {currentYear} Go-React-Template </span>
               <span className="flex items-center space-x-1">
                 <span>{t("footer.madeWith")}</span>
@@ -157,19 +162,19 @@ export const Footer: React.FC = () => {
             <div className="flex items-center space-x-6 text-sm">
               <Link
                 to="/privacy"
-                className="text-slate-600 hover:text-slate-800 transition-colors duration-300 hover:underline underline-offset-2"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-300 hover:underline underline-offset-2"
               >
                 {t("footer.privacy")}
               </Link>
               <Link
                 to="/terms"
-                className="text-slate-600 hover:text-slate-800 transition-colors duration-300 hover:underline underline-offset-2"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-300 hover:underline underline-offset-2"
               >
                 {t("footer.terms")}
               </Link>
               <Link
                 to="/cookies"
-                className="text-slate-600 hover:text-slate-800 transition-colors duration-300 hover:underline underline-offset-2"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors duration-300 hover:underline underline-offset-2"
               >
                 {t("footer.cookies")}
               </Link>

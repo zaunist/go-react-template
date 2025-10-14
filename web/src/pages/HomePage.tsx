@@ -138,13 +138,13 @@ export default function HomePage() {
             return (
               <Card
                 key={index}
-                className={`group relative overflow-hidden bg-gradient-to-br ${feature.gradient} border border-white/40 backdrop-blur-sm hover:border-white/60 transition-all duration-500 hover:scale-105 hover:shadow-xl ${feature.shadowColor}`}
+                className={`group relative overflow-hidden bg-gradient-to-br ${feature.gradient} dark:from-slate-800 dark:to-slate-900 border border-white/40 dark:border-slate-700/40 backdrop-blur-sm hover:border-white/60 dark:hover:border-slate-600/60 transition-all duration-500 hover:scale-105 hover:shadow-xl ${feature.shadowColor} dark:shadow-slate-900/50`}
               >
                 {/* 卡片光效 */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent dark:from-slate-700/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                 <CardHeader className="relative z-10">
-                  <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <div className="w-12 h-12 rounded-xl bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Icon className={`w-6 h-6 ${feature.iconColor}`} />
                   </div>
                   <CardTitle className="text-gray-800 dark:text-gray-200 text-lg font-semibold">
@@ -158,7 +158,7 @@ export default function HomePage() {
                 </CardContent>
 
                 {/* 极细描边效果 */}
-                <div className="absolute inset-0 rounded-lg border border-white/30 group-hover:border-white/50 transition-colors duration-500"></div>
+                <div className="absolute inset-0 rounded-lg border border-white/30 dark:border-slate-700/30 group-hover:border-white/50 dark:group-hover:border-slate-600/50 transition-colors duration-500"></div>
               </Card>
             );
           })}

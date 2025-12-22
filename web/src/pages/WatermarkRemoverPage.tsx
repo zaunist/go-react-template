@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import WatermarkEditor from "@/components/WatermarkEditor";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 // 步骤图标组件
 const StepIcon1 = () => (
@@ -235,19 +236,22 @@ const FAQItem = ({
 
 export default function WatermarkRemoverPage() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(0);
+  const navigate = useNavigate();
+
+  const handleUploadClick = () => {
+    navigate("/tools/watermark-remover/editor");
+  };
 
   const steps = [
     {
       icon: <StepIcon1 />,
       title: "1. Add Image",
-      description:
-        'Click "Add Files to Start" button to import your image file.',
+      description: 'Click "Upload Image" button to import your image file.',
     },
     {
       icon: <StepIcon2 />,
       title: "2. Remove Watermark",
-      description:
-        'Select the watermark area and click "Remove Watermark" button.',
+      description: 'Select the watermark area and click "Remove" button.',
     },
     {
       icon: <StepIcon3 />,
@@ -272,7 +276,7 @@ export default function WatermarkRemoverPage() {
     {
       type: "fast",
       title: "Fast Removal",
-      description: "The image watermark removal process of MDZZ is very fast.",
+      description: "The image watermark removal process is very fast.",
     },
     {
       type: "quality",
@@ -283,7 +287,8 @@ export default function WatermarkRemoverPage() {
     {
       type: "secure",
       title: "Security Guaranteed",
-      description: "MDZZ Watermark Remover promises to protect your privacy.",
+      description:
+        "All processing is done locally, your images never leave your device.",
     },
     {
       type: "noads",
@@ -302,21 +307,45 @@ export default function WatermarkRemoverPage() {
     {
       question: "Can watermarks be removed for free?",
       answer:
-        "Yes, MDZZ Free Online Watermark Remover allows you to remove watermarks from images completely free of charge. No subscription or payment required.",
+        "Yes, our Free Online Watermark Remover allows you to remove watermarks from images completely free of charge. No subscription or payment required.",
     },
     {
       question: "How to remove watermarks from images on iPhone?",
       answer:
-        "You can visit MDZZ Free Online Watermark Remover on your iPhone's browser, upload your image, select the watermark area, and remove it directly on your mobile device.",
+        "You can visit our Free Online Watermark Remover on your iPhone's browser, upload your image, select the watermark area, and remove it directly on your mobile device.",
+    },
+    {
+      question: "Is my data safe?",
+      answer:
+        "Absolutely! All image processing is done locally in your browser. Your images never leave your device and are not uploaded to any server.",
     },
   ];
 
   return (
     <div className="min-h-screen bg-white pt-[66px]">
-      {/* Editor */}
-      <section className="py-8">
-        <div className="max-w-[1200px] mx-auto px-4">
-          <WatermarkEditor />
+      {/* Hero Section with Upload Button */}
+      <section className="py-16 bg-gradient-to-b from-[#f8f6ff] to-white">
+        <div className="max-w-[1200px] mx-auto px-4 text-center">
+          <h1
+            className="text-4xl md:text-5xl font-bold mb-4"
+            style={{ color: "#1e1e1e" }}
+          >
+            Free Online Watermark Remover
+          </h1>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Remove watermarks, logos, text, and unwanted objects from your
+            images instantly. 100% free, no registration required, all
+            processing done locally.
+          </p>
+          <Button
+            onClick={handleUploadClick}
+            className="px-10 py-6 text-lg font-semibold bg-[#7b4aff] hover:bg-[#6b3ae6] text-white shadow-xl hover:shadow-2xl transition-all duration-200 rounded-full"
+          >
+            📷 Upload Image to Start
+          </Button>
+          <p className="mt-4 text-sm text-gray-500">
+            Support JPG, PNG, WebP, BMP formats
+          </p>
         </div>
       </section>
 
@@ -365,7 +394,7 @@ export default function WatermarkRemoverPage() {
                 style={{ color: "#454545" }}
               >
                 Unlike other online tools that upload your photos to remote
-                servers, MDZZ Watermark Remover processes everything directly in
+                servers, our Watermark Remover processes everything directly in
                 your browser. Your images never leave your device, ensuring
                 complete privacy and data security. No server uploads, no cloud
                 storage, no data collection. Your photos remain yours and yours
@@ -410,7 +439,7 @@ export default function WatermarkRemoverPage() {
             <div className="order-2 md:order-1 flex justify-center">
               <div className="w-full max-w-md h-64 bg-gradient-to-br from-green-100 to-teal-100 rounded-2xl flex items-center justify-center">
                 <div className="flex flex-wrap gap-2 justify-center p-8">
-                  {["JPG", "PNG", "GIF", "BMP", "TIFF"].map((format) => (
+                  {["JPG", "PNG", "GIF", "BMP", "WebP"].map((format) => (
                     <span
                       key={format}
                       className="px-4 py-2 bg-white rounded-lg shadow-sm text-[#7b4aff] font-medium"
@@ -426,19 +455,17 @@ export default function WatermarkRemoverPage() {
                 className="text-3xl font-bold mb-4"
                 style={{ color: "#1e1e1e" }}
               >
-                Support JPG/JPEG/PNG/BMP/TIFF Watermark Removal
+                Support Multiple Image Formats
               </h2>
               <p
                 className="text-base leading-relaxed"
                 style={{ color: "#454545" }}
               >
-                MDZZ is committed to providing the best experience for users. To
-                meet the needs of most users, MDZZ Free Online Watermark Remover
-                supports almost all widely used image formats, including JPG,
-                JPEG, PNG, BMP, TIFF, etc. In this case, you can use this image
-                watermark remover to remove watermarks from any image according
-                to your needs, which makes your watermark removal more
-                convenient and faster.
+                Our Free Online Watermark Remover supports almost all widely
+                used image formats, including JPG, JPEG, PNG, BMP, WebP, etc.
+                You can use this image watermark remover to remove watermarks
+                from any image according to your needs, which makes your
+                watermark removal more convenient and faster.
               </p>
             </div>
           </div>
@@ -460,14 +487,12 @@ export default function WatermarkRemoverPage() {
                 className="text-base leading-relaxed"
                 style={{ color: "#454545" }}
               >
-                In addition to removing watermarks from pictures, MDZZ Free
+                In addition to removing watermarks from pictures, our Free
                 Online Watermark Remover can also help you remove logos,
                 objects, people, text, captions, emojis, stamps, dates, etc.
                 from photos. For example, some cameras leave dates or stamps on
-                captured photos, and you can use MDZZ Watermark Remover to
-                select the date or stamp area and remove it from the photo. When
-                you shoot landscape photos, there may be tourists in the
-                pictures, you can also use this tool to erase them.
+                captured photos, and you can use our Watermark Remover to select
+                the date or stamp area and remove it from the photo.
               </p>
             </div>
             <div className="flex justify-center">
@@ -499,7 +524,7 @@ export default function WatermarkRemoverPage() {
             className="text-3xl md:text-4xl font-bold text-center mb-12"
             style={{ color: "#1e1e1e" }}
           >
-            Why Choose MDZZ Free Online Watermark Remover
+            Why Choose Our Free Online Watermark Remover
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -526,6 +551,25 @@ export default function WatermarkRemoverPage() {
         </div>
       </section>
 
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-[#7b4aff] to-[#9b6dff]">
+        <div className="max-w-[800px] mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Ready to Remove Watermarks?
+          </h2>
+          <p className="text-white/80 mb-8">
+            Start removing watermarks from your images now. It's free, fast, and
+            secure.
+          </p>
+          <Button
+            onClick={handleUploadClick}
+            className="px-10 py-6 text-lg font-semibold bg-white text-[#7b4aff] hover:bg-gray-100 shadow-xl hover:shadow-2xl transition-all duration-200 rounded-full"
+          >
+            Start Now - It's Free
+          </Button>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="py-16">
         <div className="max-w-[800px] mx-auto px-4">
@@ -533,7 +577,7 @@ export default function WatermarkRemoverPage() {
             className="text-3xl md:text-4xl font-bold text-center mb-12"
             style={{ color: "#1e1e1e" }}
           >
-            FAQ about MDZZ Free Online Watermark Remover
+            Frequently Asked Questions
           </h2>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">

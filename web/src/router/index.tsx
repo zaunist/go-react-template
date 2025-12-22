@@ -1,9 +1,10 @@
 // 路由配置
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { Layout } from "../components/layout";
+import { Layout, EditorLayout } from "../components/layout";
 import { useAuthStore } from "../store/authStore";
 import HomePage from "../pages/HomePage";
 import WatermarkRemoverPage from "../pages/WatermarkRemoverPage";
+import WatermarkEditorPage from "../pages/WatermarkEditorPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
@@ -82,6 +83,17 @@ export const router = createBrowserRouter([
             <RegisterPage />
           </PublicRoute>
         ),
+      },
+    ],
+  },
+  // 编辑器布局 - 只有 Header，没有 Footer
+  {
+    path: "/",
+    element: <EditorLayout />,
+    children: [
+      {
+        path: "tools/watermark-remover/editor",
+        element: <WatermarkEditorPage />,
       },
     ],
   },

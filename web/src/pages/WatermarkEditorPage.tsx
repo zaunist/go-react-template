@@ -10,19 +10,20 @@ import {
   Download,
   RotateCcw,
   ImagePlus,
+  GripVertical,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 
 // 工具类型
 type ToolType = "brush" | "lasso" | "eraser" | "hand";
 
-// WatermarkEditor：专业水印去除编辑器
+// WatermarkEditorPage：专业水印去除编辑器
 // - 上传图片后显示画布，底部浮动工具栏
 // - 支持画笔、套索、橡皮擦工具
 // - 支持缩放和平移
 // - 右下角下载按钮
 
-export const WatermarkEditor: React.FC = () => {
+export const WatermarkEditorPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const maskRef = useRef<HTMLCanvasElement | null>(null);
@@ -41,6 +42,78 @@ export const WatermarkEditor: React.FC = () => {
   const [isPanning, setIsPanning] = useState(false);
   const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
   const [showBrushPanel, setShowBrushPanel] = useState(false);
+
+  // 工具栏拖拽相关状态
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
+  const [isToolbarDragging, setIsToolbarDragging] = useState(false);
+  const [toolbarDragStart, setToolbarDragStart] = useState({ x: 0, y: 0 });
+  const [toolbarInitialized, setToolbarInitialized] = useState(false);
+
+  // 初始化工具栏位置（居中底部）
+  useEffect(() => {
+    if (img && !toolbarInitialized && toolbarRef.current) {
+      const toolbarWidth = toolbarRef.current.offsetWidth;
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      setToolbarPosition({
+        x: (windowWidth - toolbarWidth) / 2,
+        y: windowHeight - 100,
+      });
+      setToolbarInitialized(true);
+    }
+  }, [img, toolbarInitialized]);
+
+  // 重置工具栏初始化状态
+  useEffect(() => {
+    if (!img) {
+      setToolbarInitialized(false);
+    }
+  }, [img]);
+
+  // 工具栏拖拽处理
+  const handleToolbarDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsToolbarDragging(true);
+    setToolbarDragStart({
+      x: e.clientX - toolbarPosition.x,
+      y: e.clientY - toolbarPosition.y,
+    });
+  };
+
+  useEffect(() => {
+    const handleToolbarDragMove = (e: MouseEvent) => {
+      if (!isToolbarDragging) return;
+      const newX = e.clientX - toolbarDragStart.x;
+      const newY = e.clientY - toolbarDragStart.y;
+
+      // 限制在窗口范围内
+      const toolbarWidth = toolbarRef.current?.offsetWidth || 0;
+      const toolbarHeight = toolbarRef.current?.offsetHeight || 0;
+      const maxX = window.innerWidth - toolbarWidth;
+      const maxY = window.innerHeight - toolbarHeight;
+
+      setToolbarPosition({
+        x: Math.max(0, Math.min(newX, maxX)),
+        y: Math.max(66, Math.min(newY, maxY)), // 66px 是 header 高度
+      });
+    };
+
+    const handleToolbarDragEnd = () => {
+      setIsToolbarDragging(false);
+    };
+
+    if (isToolbarDragging) {
+      window.addEventListener("mousemove", handleToolbarDragMove);
+      window.addEventListener("mouseup", handleToolbarDragEnd);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleToolbarDragMove);
+      window.removeEventListener("mouseup", handleToolbarDragEnd);
+    };
+  }, [isToolbarDragging, toolbarDragStart]);
 
   // 缩放控制
   const zoomIn = () => setScale((s) => Math.min(s + 0.1, 3));
@@ -435,7 +508,7 @@ export const WatermarkEditor: React.FC = () => {
   void resetZoom;
 
   return (
-    <div className="relative w-full h-[calc(100vh-66px)] bg-gray-100 dark:bg-slate-900 overflow-hidden">
+    <div className="relative w-full h-full bg-gray-100 dark:bg-slate-900 overflow-hidden">
       {/* 隐藏的文件输入 */}
       <input
         ref={fileInputRef}
@@ -535,8 +608,29 @@ export const WatermarkEditor: React.FC = () => {
 
       {/* 底部浮动工具栏 */}
       {img && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+        <div
+          ref={toolbarRef}
+          className="fixed z-10"
+          style={{
+            left: toolbarInitialized ? toolbarPosition.x : "50%",
+            top: toolbarInitialized ? toolbarPosition.y : "auto",
+            bottom: toolbarInitialized ? "auto" : 24,
+            transform: toolbarInitialized ? "none" : "translateX(-50%)",
+          }}
+        >
           <div className="flex items-center gap-1 px-2 py-2 bg-white dark:bg-slate-800 rounded-full shadow-xl border border-gray-200 dark:border-slate-700">
+            {/* 拖拽手柄 */}
+            <div
+              onMouseDown={handleToolbarDragStart}
+              className="flex items-center justify-center px-1 py-2 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+              title="Drag to move toolbar"
+            >
+              <GripVertical className="w-4 h-4" />
+            </div>
+
+            {/* 分隔线 */}
+            <div className="w-px h-8 bg-gray-200 dark:bg-slate-600" />
+
             {/* 工具选择 */}
             <div className="flex items-center gap-1 px-2">
               {tools.map((t) => (
@@ -677,4 +771,4 @@ export const WatermarkEditor: React.FC = () => {
   );
 };
 
-export default WatermarkEditor;
+export default WatermarkEditorPage;

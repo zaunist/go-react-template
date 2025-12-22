@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { Menu, X, ChevronDown } from "lucide-react";
 
+// 控制是否启用用户登录注册功能
+const ENABLE_AUTH = false;
+
 interface NavChild {
   label: string;
   path: string;
@@ -126,23 +129,29 @@ export const Header: React.FC = () => {
 
         {/* Right Section - Login */}
         <div className="flex items-center gap-3">
-          {user ? (
-            <div className="hidden md:flex items-center gap-3">
-              <span className="text-sm text-[#454545]">{user.username}</span>
-              <button
-                onClick={handleLogout}
-                className="text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="hidden md:block text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
-            >
-              Login
-            </Link>
+          {ENABLE_AUTH && (
+            <>
+              {user ? (
+                <div className="hidden md:flex items-center gap-3">
+                  <span className="text-sm text-[#454545]">
+                    {user.username}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="hidden md:block text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
+                >
+                  Login
+                </Link>
+              )}
+            </>
           )}
 
           {/* Mobile Menu Button */}
@@ -202,24 +211,26 @@ export const Header: React.FC = () => {
                 </div>
               </div>
             ))}
-            <div className="pt-4 border-t border-gray-100">
-              {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left py-2 text-[#454545] text-base"
-                >
-                  Logout
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  className="block py-2 text-[#454545] text-base"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Login
-                </Link>
-              )}
-            </div>
+            {ENABLE_AUTH && (
+              <div className="pt-4 border-t border-gray-100">
+                {user ? (
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left py-2 text-[#454545] text-base"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block py-2 text-[#454545] text-base"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
+            )}
           </div>
         </nav>
       )}

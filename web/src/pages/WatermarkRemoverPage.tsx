@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, Upload } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import WatermarkEditor from "@/components/WatermarkEditor";
 
 // 步骤图标组件
 const StepIcon1 = () => (
@@ -246,7 +246,8 @@ export default function WatermarkRemoverPage() {
     {
       icon: <StepIcon2 />,
       title: "2. Remove Watermark",
-      description: 'Select the watermark area and click "Remove" button.',
+      description:
+        'Select the watermark area and click "Remove Watermark" button.',
     },
     {
       icon: <StepIcon3 />,
@@ -312,32 +313,10 @@ export default function WatermarkRemoverPage() {
 
   return (
     <div className="min-h-screen bg-white pt-[66px]">
-      {/* Hero Section */}
-      <section className="py-16 md:py-24 text-center">
+      {/* Editor */}
+      <section className="py-8">
         <div className="max-w-[1200px] mx-auto px-4">
-          <h1
-            className="text-4xl md:text-5xl font-bold mb-6"
-            style={{ color: "#1e1e1e" }}
-          >
-            Free Online Watermark Remover
-          </h1>
-          <p
-            className="text-lg md:text-xl mb-8 max-w-3xl mx-auto"
-            style={{ color: "#454545" }}
-          >
-            Completely free, easily and quickly remove watermarks, logos, text,
-            emojis, captions, stamps, and more from images.
-          </p>
-
-          {/* CTA Button */}
-          <Button variant="primary" size="xl">
-            <Upload className="w-6 h-6" />
-            Add Files to Start
-          </Button>
-
-          <p className="mt-4 text-sm" style={{ color: "#999" }}>
-            Supported formats: JPG, JPEG, PNG, GIF, etc.
-          </p>
+          <WatermarkEditor />
         </div>
       </section>
 
@@ -379,29 +358,43 @@ export default function WatermarkRemoverPage() {
                 className="text-3xl font-bold mb-4"
                 style={{ color: "#1e1e1e" }}
               >
-                AI Perfectly Removes Photo Watermarks
+                100% Local Processing, Zero Privacy Risk
               </h2>
               <p
                 className="text-base leading-relaxed"
                 style={{ color: "#454545" }}
               >
-                When you remove watermarks from photos, you may worry that the
-                removed area may become blurry and damaged. With MDZZ Free
-                Online Watermark Remover, you will no longer have this concern.
-                This watermark eraser tool applies AI technology to restore the
-                original image after removing the watermark. So you can use MDZZ
-                Watermark Remover to remove watermarks from images without
-                quality loss.
+                Unlike other online tools that upload your photos to remote
+                servers, MDZZ Watermark Remover processes everything directly in
+                your browser. Your images never leave your device, ensuring
+                complete privacy and data security. No server uploads, no cloud
+                storage, no data collection. Your photos remain yours and yours
+                alone. This local processing approach also means faster results
+                with no waiting for uploads or downloads.
               </p>
             </div>
             <div className="flex justify-center">
-              <div className="w-full max-w-md h-64 bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl flex items-center justify-center">
+              <div className="w-full max-w-md h-64 bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-pink-400 via-purple-500 to-blue-400 rounded-2xl flex items-center justify-center">
-                    <span className="text-white text-3xl font-bold">AI</span>
+                  <div className="w-24 h-24 mx-auto mb-4 bg-emerald-500 rounded-2xl flex items-center justify-center">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <path
+                        d="M24 8L14 14V24C14 32 24 38 24 38C24 38 34 32 34 24V14L24 8Z"
+                        stroke="white"
+                        strokeWidth="3"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M18 24L22 28L30 20"
+                        stroke="white"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
-                  <p className="text-[#7b4aff] font-medium">
-                    AI-Powered Removal
+                  <p className="text-emerald-600 font-medium">
+                    100% Local & Private
                   </p>
                 </div>
               </div>

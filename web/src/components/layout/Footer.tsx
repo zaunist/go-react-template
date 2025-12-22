@@ -8,7 +8,6 @@ export const Footer: React.FC = () => {
   const companyLinks = [
     { label: "Privacy Policy", path: "/privacy" },
     { label: "Terms and Conditions", path: "/terms" },
-    { label: "Sitemap", path: "/sitemap" },
   ];
 
   // const supportLinks = [

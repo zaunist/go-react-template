@@ -55,7 +55,7 @@ build: ## 构建项目
 
 build-go: ## 仅构建 Go 后端
 	@echo "🔨 构建 Go 后端..."
-	go build -o server main.go
+	CGO_ENABLED=1 go build -o server main.go
 
 build-web: ## 仅构建前端
 	@echo "🔨 构建前端..."

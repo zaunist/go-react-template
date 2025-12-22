@@ -1,11 +1,38 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
+// 自定义插件：为入口 JS 文件添加 modulepreload
+function modulePreloadPlugin(): Plugin {
+  return {
+    name: "module-preload",
+    transformIndexHtml(html, ctx) {
+      if (!ctx.bundle) return html;
+
+      const preloadLinks: string[] = [];
+
+      for (const [fileName, chunk] of Object.entries(ctx.bundle)) {
+        if (
+          chunk.type === "chunk" &&
+          (fileName.includes("vendor-react") ||
+            fileName.includes("vendor-router"))
+        ) {
+          preloadLinks.push(`<link rel="modulepreload" href="/${fileName}" />`);
+        }
+      }
+
+      return html.replace(
+        "</head>",
+        `${preloadLinks.join("\n    ")}\n  </head>`
+      );
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), modulePreloadPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

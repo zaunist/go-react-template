@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ImageOff, ArrowRight } from "lucide-react";
+import { memo } from "react";
 
-// 工具卡片组件
-const ToolCard = ({
+// 工具卡片组件 - 使用 memo 避免不必要的重渲染
+const ToolCard = memo(function ToolCard({
   icon: Icon,
   title,
   description,
@@ -15,79 +16,84 @@ const ToolCard = ({
   description: string;
   path: string;
   isNew?: boolean;
-}) => (
-  <Link
-    to={path}
-    className="group bg-white rounded-xl p-6 border border-gray-100 hover:border-[#7b4aff]/30 hover:shadow-lg transition-all"
-  >
-    <div className="flex items-start gap-4">
-      <div className="w-12 h-12 rounded-lg bg-[#f5f3ff] flex items-center justify-center group-hover:bg-[#7b4aff] transition-colors">
-        <Icon className="w-6 h-6 text-[#7b4aff] group-hover:text-white transition-colors" />
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className="text-lg font-semibold text-[#1e1e1e] group-hover:text-[#7b4aff] transition-colors">
-            {title}
-          </h3>
-          {isNew && (
-            <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-600 rounded-full">
-              New
-            </span>
-          )}
+}) {
+  return (
+    <Link
+      to={path}
+      className="group bg-white rounded-xl p-6 border border-gray-100 hover:border-[#7b4aff]/30 hover:shadow-lg transition-all"
+    >
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-lg bg-[#f5f3ff] flex items-center justify-center group-hover:bg-[#7b4aff] transition-colors">
+          <Icon className="w-6 h-6 text-[#7b4aff] group-hover:text-white transition-colors" />
         </div>
-        <p className="text-sm text-[#666] leading-relaxed">{description}</p>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="text-lg font-semibold text-[#1e1e1e] group-hover:text-[#7b4aff] transition-colors">
+              {title}
+            </h3>
+            {isNew && (
+              <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-600 rounded-full">
+                New
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+        </div>
+        <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-[#7b4aff] group-hover:translate-x-1 transition-all" />
       </div>
-      <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-[#7b4aff] group-hover:translate-x-1 transition-all" />
-    </div>
-  </Link>
-);
+    </Link>
+  );
+});
 
-// 特性项组件
-const FeatureItem = ({
+// 特性项组件 - 使用 memo 避免不必要的重渲染
+const FeatureItem = memo(function FeatureItem({
   title,
   description,
 }: {
   title: string;
   description: string;
-}) => (
-  <div className="text-center">
-    <h3 className="text-xl font-semibold text-[#1e1e1e] mb-2">{title}</h3>
-    <p className="text-sm text-[#666]">{description}</p>
-  </div>
-);
+}) {
+  return (
+    <div className="text-center">
+      <h3 className="text-xl font-semibold text-[#1e1e1e] mb-2">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
+    </div>
+  );
+});
+
+// 静态数据提取到组件外部，避免每次渲染时重新创建
+const tools = [
+  {
+    icon: ImageOff,
+    title: "Watermark Remover",
+    description:
+      "Remove watermarks, logos, text, and unwanted objects from images with AI technology.",
+    path: "/tools/watermark-remover",
+    isNew: true,
+  },
+];
+
+const features = [
+  {
+    title: "100% Free",
+    description: "All tools are completely free to use with no hidden costs.",
+  },
+  {
+    title: "100% Local",
+    description:
+      "All processing is done locally in your browser for maximum privacy.",
+  },
+  {
+    title: "No Registration",
+    description: "Use our tools instantly without creating an account.",
+  },
+  {
+    title: "Fast & Secure",
+    description: "Quick processing with your privacy always protected.",
+  },
+];
 
 export default function HomePage() {
-  const tools = [
-    {
-      icon: ImageOff,
-      title: "Watermark Remover",
-      description:
-        "Remove watermarks, logos, text, and unwanted objects from images with AI technology.",
-      path: "/tools/watermark-remover",
-      isNew: true,
-    },
-  ];
-
-  const features = [
-    {
-      title: "100% Free",
-      description: "All tools are completely free to use with no hidden costs.",
-    },
-    {
-      title: "100% Local",
-      description:
-        "All processing is done locally in your browser for maximum privacy.",
-    },
-    {
-      title: "No Registration",
-      description: "Use our tools instantly without creating an account.",
-    },
-    {
-      title: "Fast & Secure",
-      description: "Quick processing with your privacy always protected.",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-white pt-[66px]">
       {/* Hero Section */}
@@ -115,7 +121,7 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#1e1e1e]">
             Our Free Tools
           </h2>
-          <p className="text-center text-[#666] mb-12 max-w-2xl mx-auto">
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Choose from our collection of powerful tools designed to help you
             with your multimedia needs.
           </p>
@@ -158,7 +164,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold mb-2 text-[#1e1e1e]">
                 Choose a Tool
               </h3>
-              <p className="text-sm text-[#666]">
+              <p className="text-sm text-gray-600">
                 Select the tool you need from our collection of free online
                 utilities.
               </p>
@@ -170,7 +176,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold mb-2 text-[#1e1e1e]">
                 Upload Your File
               </h3>
-              <p className="text-sm text-[#666]">
+              <p className="text-sm text-gray-600">
                 Upload your image or video file to start processing immediately.
               </p>
             </div>
@@ -181,7 +187,7 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold mb-2 text-[#1e1e1e]">
                 Download Result
               </h3>
-              <p className="text-sm text-[#666]">
+              <p className="text-sm text-gray-600">
                 Download your processed file instantly. It is that simple!
               </p>
             </div>

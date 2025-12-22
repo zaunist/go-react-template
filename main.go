@@ -106,6 +106,12 @@ func setupStaticFiles(e *echo.Echo) {
 		return c.File(filepath.Join(staticDir, "favicon.ico"))
 	})
 
+	// 服务网站图标 SVG（长期缓存）
+	e.GET("/vite.svg", func(c echo.Context) error {
+		c.Response().Header().Set("Cache-Control", "public, max-age=604800") // 7天
+		return c.File(filepath.Join(staticDir, "vite.svg"))
+	})
+
 	// 处理SPA路由，所有非API请求都返回index.html
 	e.GET("/*", func(c echo.Context) error {
 		path := c.Request().URL.Path

@@ -83,7 +83,7 @@ export const Footer: React.FC = () => {
 
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-[#333] text-center">
-          <p className="text-[#666] text-sm">
+          <p className="text-gray-400 text-sm">
             Copyright © {new Date().getFullYear()} MDZZ Studio. All rights
             reserved.
           </p>

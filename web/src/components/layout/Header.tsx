@@ -85,9 +85,13 @@ export const Header: React.FC = () => {
               }
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1 px-4 py-2 text-[#1e1e1e] text-base font-medium hover:text-[#7b4aff] transition-colors">
+              <button
+                className="flex items-center gap-1 px-4 py-2 text-[#1e1e1e] text-base font-medium hover:text-[#7b4aff] transition-colors"
+                aria-expanded={activeDropdown === item.label}
+                aria-haspopup="true"
+              >
                 {item.label}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
 
               {/* Dropdown Menu */}
@@ -145,11 +149,14 @@ export const Header: React.FC = () => {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 text-[#454545] hover:text-[#7b4aff] transition-colors"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-6 h-6" aria-hidden="true" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-6 h-6" aria-hidden="true" />
             )}
           </button>
         </div>
@@ -157,7 +164,11 @@ export const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
+        <nav
+          id="mobile-menu"
+          className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg"
+          aria-label="Mobile navigation"
+        >
           <div className="px-4 py-4 space-y-2">
             {navItems.map((item, index) => (
               <div key={index}>
@@ -210,7 +221,7 @@ export const Header: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

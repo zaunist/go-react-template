@@ -2,6 +2,23 @@ import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import { sitemapPlugin } from "./plugins/sitemap";
+
+// 网站域名配置（用于生成 sitemap）
+const SITE_HOSTNAME = "https://mdzz.uk";
+
+// Sitemap 路由配置
+const sitemapRoutes = [
+  { path: "/", changefreq: "daily" as const, priority: 1.0 },
+  {
+    path: "/tools/watermark-remover",
+    changefreq: "weekly" as const,
+    priority: 0.9,
+  },
+  { path: "/privacy", changefreq: "monthly" as const, priority: 0.3 },
+  { path: "/terms", changefreq: "monthly" as const, priority: 0.3 },
+  { path: "/cookies", changefreq: "monthly" as const, priority: 0.3 },
+];
 
 // 自定义插件：为入口 JS 文件添加 modulepreload
 function modulePreloadPlugin(): Plugin {
@@ -32,7 +49,17 @@ function modulePreloadPlugin(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), modulePreloadPlugin()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    modulePreloadPlugin(),
+    sitemapPlugin({
+      hostname: SITE_HOSTNAME,
+      routes: sitemapRoutes,
+      defaultChangefreq: "weekly",
+      defaultPriority: 0.5,
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

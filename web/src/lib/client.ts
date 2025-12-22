@@ -1,7 +1,6 @@
 // HTTP客户端配置，基于axios
 import axios from "axios";
 import type { AxiosInstance, AxiosResponse, AxiosError } from "axios";
-import { useLanguageStore } from "../store/languageStore";
 
 // API基础URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
@@ -26,10 +25,6 @@ const client: AxiosInstance = axios.create({
 // 请求拦截器
 client.interceptors.request.use(
   (config) => {
-    // 设置语言请求头
-    const { currentLanguage } = useLanguageStore.getState();
-    config.headers["X-Language"] = currentLanguage;
-
     // 不再需要手动设置Authorization头，因为使用了cookie
     return config;
   },

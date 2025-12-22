@@ -13,6 +13,8 @@ export interface User {
   avatar_url: string;
   login_type: LoginType;
   bio: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 // 注册请求参数
@@ -64,37 +66,59 @@ export const userApi = {
 
   // 用户登录
   login: async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
-    const response = await client.post<ApiResponse<LoginResponse>>("/api/v1/auth/login", data);
+    const response = await client.post<ApiResponse<LoginResponse>>(
+      "/api/v1/auth/login",
+      data
+    );
     return response.data;
   },
 
   // Google登录
-  googleLogin: async (data: GoogleLoginRequest): Promise<ApiResponse<LoginResponse>> => {
-    const response = await client.post<ApiResponse<LoginResponse>>("/api/v1/auth/google", data);
+  googleLogin: async (
+    data: GoogleLoginRequest
+  ): Promise<ApiResponse<LoginResponse>> => {
+    const response = await client.post<ApiResponse<LoginResponse>>(
+      "/api/v1/auth/google",
+      data
+    );
     return response.data;
   },
 
   // 用户注销
   logout: async (): Promise<ApiResponse<null>> => {
-    const response = await client.post<ApiResponse<null>>("/api/v1/auth/logout");
+    const response = await client.post<ApiResponse<null>>(
+      "/api/v1/auth/logout"
+    );
     return response.data;
   },
 
   // 获取用户信息
   getProfile: async (): Promise<ApiResponse<User>> => {
-    const response = await client.get<ApiResponse<User>>("/api/v1/user/profile");
+    const response = await client.get<ApiResponse<User>>(
+      "/api/v1/user/profile"
+    );
     return response.data;
   },
 
   // 更新个人资料
-  updateProfile: async (data: UpdateProfileRequest): Promise<ApiResponse<User>> => {
-    const response = await client.put<ApiResponse<User>>("/api/v1/user/profile", data);
+  updateProfile: async (
+    data: UpdateProfileRequest
+  ): Promise<ApiResponse<User>> => {
+    const response = await client.put<ApiResponse<User>>(
+      "/api/v1/user/profile",
+      data
+    );
     return response.data;
   },
 
   // 修改密码
-  changePassword: async (data: ChangePasswordRequest): Promise<ApiResponse<null>> => {
-    const response = await client.post<ApiResponse<null>>("/api/v1/user/change-password", data);
+  changePassword: async (
+    data: ChangePasswordRequest
+  ): Promise<ApiResponse<null>> => {
+    const response = await client.post<ApiResponse<null>>(
+      "/api/v1/user/change-password",
+      data
+    );
     return response.data;
   },
 };

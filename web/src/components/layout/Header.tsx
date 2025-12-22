@@ -1,229 +1,217 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useAuthStore } from "@/store/authStore";
-import { Home, User, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/store/authStore";
+import { Menu, X, ChevronDown } from "lucide-react";
+
+interface NavChild {
+  label: string;
+  path: string;
+  external?: boolean;
+}
+
+interface NavItem {
+  label: string;
+  hasDropdown: boolean;
+  children: NavChild[];
+}
 
 export const Header: React.FC = () => {
-  const { t } = useTranslation();
-  const location = useLocation();
   const { user, logout } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const handleLogout = () => {
     logout();
     setIsMobileMenuOpen(false);
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-
-  const navItems = [
-    { path: "/", label: t("nav.home"), icon: Home },
-    ...(user
-      ? [{ path: "/dashboard", label: t("nav.dashboard"), icon: User }]
-      : []),
+  const navItems: NavItem[] = [
+    {
+      label: "Free Tools",
+      hasDropdown: true,
+      children: [
+        {
+          label: "Watermark Remover",
+          path: "/tools/watermark-remover",
+          external: false,
+        },
+      ],
+    },
+    {
+      label: "More Tools",
+      hasDropdown: true,
+      children: [
+        {
+          label: "XUGOU--free sys monitor",
+          path: "https://github.com/zaunist/xugou",
+          external: true,
+        },
+        {
+          label: "ZMAIL--temp mail",
+          path: "https://mail.mdzz.uk",
+          external: true,
+        },
+      ],
+    },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-50/95 via-white/95 to-orange-50/95 dark:from-slate-900/95 dark:via-slate-800/95 dark:to-slate-900/95 backdrop-blur-xl border-b border-orange-200/50 dark:border-slate-700/50 shadow-lg shadow-orange-200/20 dark:shadow-slate-900/20">
-      {/* 背景装饰 */}
-      <div
-        className="absolute inset-0 opacity-40"
-        style={{
-          backgroundImage: `url('data:image/svg+xml,${encodeURIComponent(`
-            <svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>
-              <defs>
-                <pattern id='noise' width='100' height='100' patternUnits='userSpaceOnUse'>
-                  <circle cx='20' cy='20' r='0.5' fill='%23e2e8f0' opacity='0.3'/>
-                  <circle cx='80' cy='40' r='0.3' fill='%23cbd5e1' opacity='0.2'/>
-                  <circle cx='40' cy='80' r='0.4' fill='%23f1f5f9' opacity='0.4'/>
-                  <circle cx='90' cy='90' r='0.2' fill='%23e2e8f0' opacity='0.3'/>
-                  <circle cx='10' cy='60' r='0.3' fill='%23cbd5e1' opacity='0.2'/>
-                </pattern>
-              </defs>
-              <rect width='100' height='100' fill='url(%23noise)'/>
-            </svg>
-          `)}`,
-        }}
-      />
-
-      {/* 流光效果 */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-300/60 to-transparent"></div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center space-x-2 text-slate-800 dark:text-slate-200 hover:text-slate-600 dark:hover:text-slate-400 transition-colors duration-300"
-          >
-            <div className="w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-lg flex items-center justify-center border border-slate-300/50 dark:border-slate-600/50 shadow-sm">
-              <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                GT
-              </span>
-            </div>
-            <span className="font-semibold text-lg hidden sm:block dark:text-slate-200">
-              Go-React Template
-            </span>
-          </Link>
-
-          {/* 桌面端导航 */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map(({ path, label, icon: Icon }) => (
-              <Link
-                key={path}
-                to={path}
-                className={`
-                  flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                  ${
-                    isActive(path)
-                      ? "bg-orange-100/30 dark:bg-slate-700/30 text-slate-800 dark:text-slate-200 shadow-sm"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-orange-50/40 dark:hover:bg-slate-700/40"
-                  }
-                `}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{label}</span>
-              </Link>
-            ))}
-          </nav>
-
-          {/* 右侧操作区 */}
-          <div className="flex items-center space-x-3">
-            {/* 主题切换器 */}
-            <ThemeToggle />
-
-            {/* 语言切换器 */}
-            <LanguageSwitcher />
-
-            {/* 用户操作 */}
-            {user ? (
-              <div className="hidden md:flex items-center space-x-2">
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  {t("common.welcome")}, {user.username}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="bg-orange-100/50 dark:bg-slate-700/50 border-orange-300/50 dark:border-slate-600/50 text-slate-600 dark:text-slate-300 hover:bg-orange-200/50 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-100 hover:border-orange-400 dark:hover:border-slate-500 transition-all duration-300"
-                >
-                  <LogOut className="w-4 h-4 mr-1" />
-                  {t("auth.logout")}
-                </Button>
-              </div>
-            ) : (
-              <div className="hidden md:flex items-center space-x-2">
-                <Link to="/login">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-orange-100/50 dark:bg-slate-700/50 border-orange-300/50 dark:border-slate-600/50 text-slate-600 dark:text-slate-300 hover:bg-orange-200/50 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-100 hover:border-orange-400 dark:hover:border-slate-500 transition-all duration-300"
-                  >
-                    {t("auth.login")}
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button
-                    size="sm"
-                    className="bg-orange-500/90 dark:bg-orange-600/90 text-white hover:bg-orange-600/90 dark:hover:bg-orange-700/90 transition-all duration-300 hover:scale-105 shadow-sm"
-                  >
-                    {t("auth.register")}
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            {/* 移动端菜单按钮 */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleMobileMenu}
-              className="md:hidden bg-slate-100/50 dark:bg-slate-700/50 border-slate-300/50 dark:border-slate-600/50 text-slate-600 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-100"
+    <header
+      className="fixed top-0 left-0 right-0 z-50 bg-white"
+      style={{ height: "66px", borderBottom: "1px solid #f0f0f0" }}
+    >
+      <div className="max-w-[1200px] mx-auto px-4 h-full flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <div className="flex items-center gap-2">
+            <img src="/vite.svg" alt="MDZZ" className="w-8 h-8" />
+            <span
+              className="font-semibold text-lg hidden sm:block"
+              style={{ color: "#1e1e1e" }}
             >
-              {isMobileMenuOpen ? (
-                <X className="w-4 h-4" />
-              ) : (
-                <Menu className="w-4 h-4" />
-              )}
-            </Button>
+              MDZZ
+            </span>
           </div>
-        </div>
+        </Link>
 
-        {/* 移动端菜单 */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200/50 dark:border-slate-700/50 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navItems.map(({ path, label, icon: Icon }) => (
-                <Link
-                  key={path}
-                  to={path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`
-                    flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300
-                    ${
-                      isActive(path)
-                        ? "bg-orange-100/30 dark:bg-slate-700/30 text-slate-800 dark:text-slate-200 shadow-sm"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-orange-50/40 dark:hover:bg-slate-700/40"
-                    }
-                  `}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{label}</span>
-                </Link>
-              ))}
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-1">
+          {navItems.map((item, index) => (
+            <div
+              key={index}
+              className="relative"
+              onMouseEnter={() =>
+                item.hasDropdown && setActiveDropdown(item.label)
+              }
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1 px-4 py-2 text-[#1e1e1e] text-base font-medium hover:text-[#7b4aff] transition-colors">
+                {item.label}
+                <ChevronDown className="w-4 h-4" />
+              </button>
 
-              {/* 移动端用户操作 */}
-              {user ? (
-                <div className="pt-2 border-t border-slate-200/50">
-                  <div className="px-3 py-2 text-sm text-slate-600 dark:text-slate-400">
-                    {t("common.welcome")}, {user.username}
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-2 w-full px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-700/50 rounded-lg transition-all duration-300"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>{t("auth.logout")}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="pt-2 border-t border-slate-200/50 space-y-1">
-                  <Link
-                    to="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-700/50 rounded-lg transition-all duration-300"
-                  >
-                    {t("auth.login")}
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-700/50 rounded-lg transition-all duration-300"
-                  >
-                    {t("auth.register")}
-                  </Link>
+              {/* Dropdown Menu */}
+              {item.hasDropdown && activeDropdown === item.label && (
+                <div className="absolute top-full left-0 mt-0 bg-white rounded-lg shadow-lg border border-gray-100 py-2 min-w-[200px]">
+                  {item.children?.map((child, childIndex) =>
+                    child.external ? (
+                      <a
+                        key={childIndex}
+                        href={child.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-4 py-2 text-[#454545] text-sm hover:bg-gray-50 hover:text-[#7b4aff] transition-colors"
+                      >
+                        {child.label}
+                      </a>
+                    ) : (
+                      <Link
+                        key={childIndex}
+                        to={child.path}
+                        className="block px-4 py-2 text-[#454545] text-sm hover:bg-gray-50 hover:text-[#7b4aff] transition-colors"
+                      >
+                        {child.label}
+                      </Link>
+                    )
+                  )}
                 </div>
               )}
             </div>
-          </div>
-        )}
+          ))}
+        </nav>
+
+        {/* Right Section - Login */}
+        <div className="flex items-center gap-3">
+          {user ? (
+            <div className="hidden md:flex items-center gap-3">
+              <span className="text-sm text-[#454545]">{user.username}</span>
+              <button
+                onClick={handleLogout}
+                className="text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden md:block text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
+            >
+              Login
+            </Link>
+          )}
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-[#454545] hover:text-[#7b4aff] transition-colors"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* 极细描边效果 */}
-      <div className="absolute inset-0 rounded-lg border border-gray-600/20 pointer-events-none"></div>
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
+          <div className="px-4 py-4 space-y-2">
+            {navItems.map((item, index) => (
+              <div key={index}>
+                <div className="py-2 text-[#1e1e1e] text-base font-medium">
+                  {item.label}
+                </div>
+                <div className="pl-4 space-y-1">
+                  {item.children.map((child, childIndex) =>
+                    child.external ? (
+                      <a
+                        key={childIndex}
+                        href={child.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block py-1.5 text-[#454545] text-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {child.label}
+                      </a>
+                    ) : (
+                      <Link
+                        key={childIndex}
+                        to={child.path}
+                        className="block py-1.5 text-[#454545] text-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {child.label}
+                      </Link>
+                    )
+                  )}
+                </div>
+              </div>
+            ))}
+            <div className="pt-4 border-t border-gray-100">
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left py-2 text-[#454545] text-base"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  className="block py-2 text-[#454545] text-base"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
-
-export default Header;

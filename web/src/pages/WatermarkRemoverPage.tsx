@@ -1,0 +1,561 @@
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// 步骤图标组件
+const StepIcon1 = () => (
+  <svg
+    width="80"
+    height="80"
+    viewBox="0 0 80 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="40" cy="40" r="38" stroke="#e0e0e0" strokeWidth="2" />
+    <path
+      d="M30 35V45C30 46.1 30.9 47 32 47H48C49.1 47 50 46.1 50 45V35C50 33.9 49.1 33 48 33H32C30.9 33 30 33.9 30 35Z"
+      stroke="#7b4aff"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M36 40H44M40 36V44"
+      stroke="#7b4aff"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const StepIcon2 = () => (
+  <svg
+    width="80"
+    height="80"
+    viewBox="0 0 80 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="40" cy="40" r="38" stroke="#e0e0e0" strokeWidth="2" />
+    <path
+      d="M32 32H48V48H32V32Z"
+      stroke="#7b4aff"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeDasharray="4 2"
+    />
+    <path
+      d="M36 36H44V44H36V36Z"
+      fill="#7b4aff"
+      fillOpacity="0.2"
+      stroke="#7b4aff"
+      strokeWidth="2"
+    />
+  </svg>
+);
+
+const StepIcon3 = () => (
+  <svg
+    width="80"
+    height="80"
+    viewBox="0 0 80 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="40" cy="40" r="38" stroke="#e0e0e0" strokeWidth="2" />
+    <path
+      d="M40 32V44M40 44L35 39M40 44L45 39"
+      stroke="#7b4aff"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M32 48H48"
+      stroke="#7b4aff"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+// 特性图标
+const FeatureIcon = ({ type }: { type: string }) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    free: (
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-[#7b4aff]"
+      >
+        <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2" />
+        <path
+          d="M24 14V34M18 20H30M18 28H26"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    ),
+    easy: (
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-[#7b4aff]"
+      >
+        <path
+          d="M14 34L24 14L34 34H14Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <circle cx="24" cy="28" r="2" fill="currentColor" />
+      </svg>
+    ),
+    fast: (
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-[#7b4aff]"
+      >
+        <path
+          d="M28 14L18 26H24L20 34L30 22H24L28 14Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    quality: (
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-[#7b4aff]"
+      >
+        <path
+          d="M24 14L27 20L34 21L29 26L30 33L24 30L18 33L19 26L14 21L21 20L24 14Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    secure: (
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-[#7b4aff]"
+      >
+        <path
+          d="M24 14L14 18V26C14 32 24 36 24 36C24 36 34 32 34 26V18L24 14Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M20 26L23 29L28 22"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    noads: (
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 48 48"
+        fill="none"
+        className="text-[#7b4aff]"
+      >
+        <rect
+          x="14"
+          y="14"
+          width="20"
+          height="20"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="2"
+        />
+        <path
+          d="M14 14L34 34M34 14L14 34"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    ),
+  };
+  return iconMap[type] || iconMap.free;
+};
+
+// FAQ 组件
+const FAQItem = ({
+  question,
+  answer,
+  isOpen,
+  onClick,
+}: {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onClick: () => void;
+}) => (
+  <div className="border-b border-gray-200 last:border-b-0">
+    <button
+      onClick={onClick}
+      className="w-full flex items-center justify-between py-4 text-left text-[#1e1e1e] font-medium hover:text-[#7b4aff] transition-colors"
+    >
+      <span>{question}</span>
+      {isOpen ? (
+        <ChevronUp className="w-5 h-5 text-[#7b4aff]" />
+      ) : (
+        <ChevronDown className="w-5 h-5" />
+      )}
+    </button>
+    {isOpen && (
+      <div className="pb-4 text-[#454545] text-sm leading-relaxed">
+        {answer}
+      </div>
+    )}
+  </div>
+);
+
+export default function WatermarkRemoverPage() {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(0);
+
+  const steps = [
+    {
+      icon: <StepIcon1 />,
+      title: "1. Add Image",
+      description:
+        'Click "Add Files to Start" button to import your image file.',
+    },
+    {
+      icon: <StepIcon2 />,
+      title: "2. Remove Watermark",
+      description: 'Select the watermark area and click "Remove" button.',
+    },
+    {
+      icon: <StepIcon3 />,
+      title: "3. Save Image",
+      description: 'Click "Download" to save the watermark-free image.',
+    },
+  ];
+
+  const features = [
+    {
+      type: "free",
+      title: "Completely Free",
+      description:
+        "You can use this tool to remove watermarks from photos 100% free.",
+    },
+    {
+      type: "easy",
+      title: "Easy to Remove",
+      description:
+        "Clear guides and design make it easier to remove watermarks from images.",
+    },
+    {
+      type: "fast",
+      title: "Fast Removal",
+      description: "The image watermark removal process of MDZZ is very fast.",
+    },
+    {
+      type: "quality",
+      title: "High Quality Output",
+      description:
+        "You can save images in high quality after removing watermarks.",
+    },
+    {
+      type: "secure",
+      title: "Security Guaranteed",
+      description: "MDZZ Watermark Remover promises to protect your privacy.",
+    },
+    {
+      type: "noads",
+      title: "No Ads",
+      description:
+        "Unlike other websites, this watermark remover has no advertisements.",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "What is a watermark in a photo?",
+      answer:
+        "A watermark is an image that identifies a picture and tells people who the picture belongs to. It can also be a logo or text. Watermarks on photos are usually transparent.",
+    },
+    {
+      question: "Can watermarks be removed for free?",
+      answer:
+        "Yes, MDZZ Free Online Watermark Remover allows you to remove watermarks from images completely free of charge. No subscription or payment required.",
+    },
+    {
+      question: "How to remove watermarks from images on iPhone?",
+      answer:
+        "You can visit MDZZ Free Online Watermark Remover on your iPhone's browser, upload your image, select the watermark area, and remove it directly on your mobile device.",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-white pt-[66px]">
+      {/* Hero Section */}
+      <section className="py-16 md:py-24 text-center">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h1
+            className="text-4xl md:text-5xl font-bold mb-6"
+            style={{ color: "#1e1e1e" }}
+          >
+            Free Online Watermark Remover
+          </h1>
+          <p
+            className="text-lg md:text-xl mb-8 max-w-3xl mx-auto"
+            style={{ color: "#454545" }}
+          >
+            Completely free, easily and quickly remove watermarks, logos, text,
+            emojis, captions, stamps, and more from images.
+          </p>
+
+          {/* CTA Button */}
+          <Button variant="primary" size="xl">
+            <Upload className="w-6 h-6" />
+            Add Files to Start
+          </Button>
+
+          <p className="mt-4 text-sm" style={{ color: "#999" }}>
+            Supported formats: JPG, JPEG, PNG, GIF, etc.
+          </p>
+        </div>
+      </section>
+
+      {/* How To Section */}
+      <section className="py-16 bg-[#fafafa]">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-center mb-12"
+            style={{ color: "#1e1e1e" }}
+          >
+            How to Remove Watermarks from Images
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((step, index) => (
+              <div key={index} className="text-center">
+                <div className="flex justify-center mb-4">{step.icon}</div>
+                <h3
+                  className="text-xl font-semibold mb-2"
+                  style={{ color: "#1e1e1e" }}
+                >
+                  {step.title}
+                </h3>
+                <p className="text-sm" style={{ color: "#454545" }}>
+                  {step.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Section 1 */}
+      <section className="py-16">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2
+                className="text-3xl font-bold mb-4"
+                style={{ color: "#1e1e1e" }}
+              >
+                AI Perfectly Removes Photo Watermarks
+              </h2>
+              <p
+                className="text-base leading-relaxed"
+                style={{ color: "#454545" }}
+              >
+                When you remove watermarks from photos, you may worry that the
+                removed area may become blurry and damaged. With MDZZ Free
+                Online Watermark Remover, you will no longer have this concern.
+                This watermark eraser tool applies AI technology to restore the
+                original image after removing the watermark. So you can use MDZZ
+                Watermark Remover to remove watermarks from images without
+                quality loss.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <div className="w-full max-w-md h-64 bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-pink-400 via-purple-500 to-blue-400 rounded-2xl flex items-center justify-center">
+                    <span className="text-white text-3xl font-bold">AI</span>
+                  </div>
+                  <p className="text-[#7b4aff] font-medium">
+                    AI-Powered Removal
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Section 2 */}
+      <section className="py-16 bg-[#fafafa]">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="order-2 md:order-1 flex justify-center">
+              <div className="w-full max-w-md h-64 bg-gradient-to-br from-green-100 to-teal-100 rounded-2xl flex items-center justify-center">
+                <div className="flex flex-wrap gap-2 justify-center p-8">
+                  {["JPG", "PNG", "GIF", "BMP", "TIFF"].map((format) => (
+                    <span
+                      key={format}
+                      className="px-4 py-2 bg-white rounded-lg shadow-sm text-[#7b4aff] font-medium"
+                    >
+                      {format}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="order-1 md:order-2">
+              <h2
+                className="text-3xl font-bold mb-4"
+                style={{ color: "#1e1e1e" }}
+              >
+                Support JPG/JPEG/PNG/BMP/TIFF Watermark Removal
+              </h2>
+              <p
+                className="text-base leading-relaxed"
+                style={{ color: "#454545" }}
+              >
+                MDZZ is committed to providing the best experience for users. To
+                meet the needs of most users, MDZZ Free Online Watermark Remover
+                supports almost all widely used image formats, including JPG,
+                JPEG, PNG, BMP, TIFF, etc. In this case, you can use this image
+                watermark remover to remove watermarks from any image according
+                to your needs, which makes your watermark removal more
+                convenient and faster.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Section 3 */}
+      <section className="py-16">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2
+                className="text-3xl font-bold mb-4"
+                style={{ color: "#1e1e1e" }}
+              >
+                Remove Any Unwanted Things from Pictures
+              </h2>
+              <p
+                className="text-base leading-relaxed"
+                style={{ color: "#454545" }}
+              >
+                In addition to removing watermarks from pictures, MDZZ Free
+                Online Watermark Remover can also help you remove logos,
+                objects, people, text, captions, emojis, stamps, dates, etc.
+                from photos. For example, some cameras leave dates or stamps on
+                captured photos, and you can use MDZZ Watermark Remover to
+                select the date or stamp area and remove it from the photo. When
+                you shoot landscape photos, there may be tourists in the
+                pictures, you can also use this tool to erase them.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <div className="w-full max-w-md h-64 bg-gradient-to-br from-orange-100 to-yellow-100 rounded-2xl flex items-center justify-center">
+                <div className="grid grid-cols-3 gap-3 p-8">
+                  {["Logo", "Text", "Date", "Stamp", "Emoji", "Object"].map(
+                    (item) => (
+                      <div
+                        key={item}
+                        className="w-16 h-16 bg-white rounded-lg shadow-sm flex items-center justify-center"
+                      >
+                        <span className="text-xs text-[#7b4aff] font-medium">
+                          {item}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Section */}
+      <section className="py-16 bg-[#fafafa]">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-center mb-12"
+            style={{ color: "#1e1e1e" }}
+          >
+            Why Choose MDZZ Free Online Watermark Remover
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl p-6 text-center hover:shadow-lg transition-shadow"
+              >
+                <div className="flex justify-center mb-4">
+                  <FeatureIcon type={feature.type} />
+                </div>
+                <h3
+                  className="text-lg font-semibold mb-2"
+                  style={{ color: "#1e1e1e" }}
+                >
+                  {feature.title}
+                </h3>
+                <p className="text-sm" style={{ color: "#454545" }}>
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16">
+        <div className="max-w-[800px] mx-auto px-4">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-center mb-12"
+            style={{ color: "#1e1e1e" }}
+          >
+            FAQ about MDZZ Free Online Watermark Remover
+          </h2>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            {faqs.map((faq, index) => (
+              <FAQItem
+                key={index}
+                question={faq.question}
+                answer={faq.answer}
+                isOpen={openFAQ === index}
+                onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

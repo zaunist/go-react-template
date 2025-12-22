@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Layout } from "../components/layout";
 import { useAuthStore } from "../store/authStore";
 import HomePage from "../pages/HomePage";
+import WatermarkRemoverPage from "../pages/WatermarkRemoverPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         path: "cookies",
         element: <CookiesPage />,
+      },
+      {
+        path: "tools/watermark-remover",
+        element: <WatermarkRemoverPage />,
       },
       {
         path: "dashboard",

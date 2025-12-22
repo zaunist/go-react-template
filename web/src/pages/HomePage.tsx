@@ -1,145 +1,216 @@
-// 主页
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ArrowRight, Code, Database, Globe, Zap } from "lucide-react";
+import { ImageOff, ArrowRight } from "lucide-react";
+
+// 工具卡片组件
+const ToolCard = ({
+  icon: Icon,
+  title,
+  description,
+  path,
+  isNew,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  path: string;
+  isNew?: boolean;
+}) => (
+  <Link
+    to={path}
+    className="group bg-white rounded-xl p-6 border border-gray-100 hover:border-[#7b4aff]/30 hover:shadow-lg transition-all"
+  >
+    <div className="flex items-start gap-4">
+      <div className="w-12 h-12 rounded-lg bg-[#f5f3ff] flex items-center justify-center group-hover:bg-[#7b4aff] transition-colors">
+        <Icon className="w-6 h-6 text-[#7b4aff] group-hover:text-white transition-colors" />
+      </div>
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="text-lg font-semibold text-[#1e1e1e] group-hover:text-[#7b4aff] transition-colors">
+            {title}
+          </h3>
+          {isNew && (
+            <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-600 rounded-full">
+              New
+            </span>
+          )}
+        </div>
+        <p className="text-sm text-[#666] leading-relaxed">{description}</p>
+      </div>
+      <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-[#7b4aff] group-hover:translate-x-1 transition-all" />
+    </div>
+  </Link>
+);
+
+// 特性项组件
+const FeatureItem = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => (
+  <div className="text-center">
+    <h3 className="text-xl font-semibold text-[#1e1e1e] mb-2">{title}</h3>
+    <p className="text-sm text-[#666]">{description}</p>
+  </div>
+);
 
 export default function HomePage() {
-  const { t } = useTranslation();
+  const tools = [
+    {
+      icon: ImageOff,
+      title: "Watermark Remover",
+      description:
+        "Remove watermarks, logos, text, and unwanted objects from images with AI technology.",
+      path: "/tools/watermark-remover",
+      isNew: true,
+    },
+  ];
 
   const features = [
     {
-      icon: Code,
-      title: t("home.modernTechStack"),
-      description: t("home.modernTechStackDesc"),
-      gradient: "from-blue-50 to-indigo-100",
-      iconColor: "text-indigo-600",
-      shadowColor: "shadow-blue-100/50",
+      title: "100% Free",
+      description: "All tools are completely free to use with no hidden costs.",
     },
     {
-      icon: Zap,
-      title: t("home.highPerformance"),
-      description: t("home.highPerformanceDesc"),
-      gradient: "from-purple-50 to-pink-100",
-      iconColor: "text-purple-600",
-      shadowColor: "shadow-purple-100/50",
+      title: "100% Local",
+      description:
+        "All processing is done locally in your browser for maximum privacy.",
     },
     {
-      icon: Database,
-      title: t("home.completeAuth"),
-      description: t("home.completeAuthDesc"),
-      gradient: "from-cyan-50 to-blue-100",
-      iconColor: "text-cyan-600",
-      shadowColor: "shadow-cyan-100/50",
+      title: "No Registration",
+      description: "Use our tools instantly without creating an account.",
     },
     {
-      icon: Globe,
-      title: t("home.i18nSupport"),
-      description: t("home.i18nSupportDesc"),
-      gradient: "from-emerald-50 to-teal-100",
-      iconColor: "text-emerald-600",
-      shadowColor: "shadow-emerald-100/50",
+      title: "Fast & Secure",
+      description: "Quick processing with your privacy always protected.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-200 font-sans overflow-hidden relative">
-      {/* 背景装饰 - 简化版，减少 DOM 节点和动画开销 */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* 简化的渐变背景效果 */}
-        <div
-          className="absolute inset-0 opacity-30 dark:opacity-20"
-          style={{
-            background:
-              "radial-gradient(ellipse at 30% 20%, rgba(251, 191, 36, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%)",
-          }}
-        />
-      </div>
-
-      {/* 主要内容 */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
-        {/* 标题区域 */}
-        <div className="text-center mb-16">
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 bg-clip-text text-transparent">
-            {t("home.title")}
+    <div className="min-h-screen bg-white pt-[66px]">
+      {/* Hero Section */}
+      <section className="py-16 md:py-24 text-center bg-gradient-to-b from-[#fafafa] to-white">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#1e1e1e]">
+            Free Online Toolbox
           </h1>
+          <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-[#454545]">
+            A collection of free, easy-to-use online tools for image and video
+            processing. No registration required, no software to install.
+          </p>
+          <Button variant="primary" size="xl" asChild>
+            <Link to="/tools/watermark-remover">
+              <ImageOff className="w-6 h-6" />
+              Try Watermark Remover
+            </Link>
+          </Button>
+        </div>
+      </section>
 
-          <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed font-medium">
-            {t("home.subtitle")}
+      {/* Tools Section */}
+      <section className="py-16">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#1e1e1e]">
+            Our Free Tools
+          </h2>
+          <p className="text-center text-[#666] mb-12 max-w-2xl mx-auto">
+            Choose from our collection of powerful tools designed to help you
+            with your multimedia needs.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/login">
-              <Button
-                size="lg"
-                className="group bg-gradient-to-r from-orange-500 to-amber-600 text-white hover:from-orange-600 hover:to-amber-700 transition-all duration-200 hover:scale-105 hover:shadow-lg px-8 py-4 text-lg font-medium border-0"
-              >
-                <span className="flex items-center gap-2">
-                  {t("home.getStarted")}
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Button>
-            </Link>
-
-            <Link to="/register">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-orange-200 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-slate-700/80 transition-all duration-200 hover:scale-105 hover:shadow-md px-8 py-4 text-lg font-medium"
-              >
-                {t("home.learnMore")}
-              </Button>
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tools.map((tool, index) => (
+              <ToolCard key={index} {...tool} />
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* 特性卡片 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <Card
-                key={index}
-                className={`group bg-gradient-to-br ${feature.gradient} dark:from-slate-800 dark:to-slate-900 border border-white/40 dark:border-slate-700/40 backdrop-blur-sm hover:border-white/60 dark:hover:border-slate-600/60 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${feature.shadowColor} dark:shadow-slate-900/50`}
-              >
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-xl bg-white/80 dark:bg-slate-700/80 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200 shadow-md">
-                    <Icon className={`w-6 h-6 ${feature.iconColor}`} />
-                  </div>
-                  <CardTitle className="text-gray-800 dark:text-gray-200 text-lg font-semibold">
-                    {feature.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            );
-          })}
+      {/* Features Section */}
+      <section className="py-16 bg-[#fafafa]">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#1e1e1e]">
+            Why Choose MDZZ Toolbox
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <FeatureItem key={index} {...feature} />
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* 底部信息 */}
-        <div className="mt-20 text-center">
-          <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-            {t("home.builtWith")}
+      {/* How It Works Section */}
+      <section className="py-16">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#1e1e1e]">
+            How It Works
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f5f3ff] flex items-center justify-center">
+                <span className="text-2xl font-bold text-[#7b4aff]">1</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-[#1e1e1e]">
+                Choose a Tool
+              </h3>
+              <p className="text-sm text-[#666]">
+                Select the tool you need from our collection of free online
+                utilities.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f5f3ff] flex items-center justify-center">
+                <span className="text-2xl font-bold text-[#7b4aff]">2</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-[#1e1e1e]">
+                Upload Your File
+              </h3>
+              <p className="text-sm text-[#666]">
+                Upload your image or video file to start processing immediately.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f5f3ff] flex items-center justify-center">
+                <span className="text-2xl font-bold text-[#7b4aff]">3</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-[#1e1e1e]">
+                Download Result
+              </h3>
+              <p className="text-sm text-[#666]">
+                Download your processed file instantly. It is that simple!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-[#1e1e1e]">
+        <div className="max-w-[800px] mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+            Ready to Get Started?
+          </h2>
+          <p className="text-lg mb-8 text-gray-300">
+            Try our most popular tool - the AI-powered Watermark Remover.
           </p>
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-sm"></div>
-            <span className="text-gray-400 dark:text-gray-500 text-xs font-medium">
-              {t("home.systemStatus")}
-            </span>
-          </div>
+          <Button
+            variant="primary"
+            size="xl"
+            className="bg-white text-[#1e1e1e] hover:bg-gray-100"
+            asChild
+          >
+            <Link to="/tools/watermark-remover">
+              <ImageOff className="w-6 h-6" />
+              Remove Watermark Now
+            </Link>
+          </Button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

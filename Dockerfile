@@ -46,9 +46,6 @@ RUN CGO_ENABLED=1 go build -o server main.go
 # 第三阶段：运行阶段
 FROM alpine:latest
 
-# 安装必要的运行时依赖
-RUN apk --no-cache add ca-certificates tzdata wget
-
 # 设置工作目录
 WORKDIR /app
 
@@ -61,10 +58,6 @@ RUN chmod +x /app/server
 
 # 暴露端口
 EXPOSE 1323
-
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:1323/api/v1/health || exit 1
 
 # 启动应用
 CMD ["/app/server"]

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"go-react-template/api"
 	"go-react-template/configs"
@@ -45,6 +46,20 @@ func main() {
 	// 添加中间件
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	// 启用 Gzip 压缩
+	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		Level: 5, // 压缩级别 1-9，5 是性能和压缩率的平衡
+		Skipper: func(c echo.Context) bool {
+			// 跳过已经压缩的资源（如图片）
+			path := c.Request().URL.Path
+			return strings.HasSuffix(path, ".png") ||
+				strings.HasSuffix(path, ".jpg") ||
+				strings.HasSuffix(path, ".jpeg") ||
+				strings.HasSuffix(path, ".gif") ||
+				strings.HasSuffix(path, ".webp") ||
+				strings.HasSuffix(path, ".ico")
+		},
+	}))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
 		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
@@ -74,9 +89,22 @@ func setupStaticFiles(e *echo.Echo) {
 		return
 	}
 
-	// 服务静态文件
-	e.Static("/assets", filepath.Join(staticDir, "assets"))
-	e.File("/favicon.ico", filepath.Join(staticDir, "favicon.ico"))
+	// 服务带有哈希的静态资源文件（长期缓存）
+	e.GET("/assets/*", func(c echo.Context) error {
+		filePath := filepath.Join(staticDir, c.Request().URL.Path)
+		if _, err := os.Stat(filePath); err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "File not found")
+		}
+		// 设置强缓存：1年，因为文件名包含哈希值
+		c.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+		return c.File(filePath)
+	})
+
+	// 服务 favicon（短期缓存）
+	e.GET("/favicon.ico", func(c echo.Context) error {
+		c.Response().Header().Set("Cache-Control", "public, max-age=86400") // 1天
+		return c.File(filepath.Join(staticDir, "favicon.ico"))
+	})
 
 	// 处理SPA路由，所有非API请求都返回index.html
 	e.GET("/*", func(c echo.Context) error {
@@ -94,10 +122,15 @@ func setupStaticFiles(e *echo.Echo) {
 		}
 
 		if _, err := os.Stat(filePath); err == nil {
+			// 对于 HTML 文件，使用协商缓存
+			if filepath.Ext(filePath) == ".html" {
+				c.Response().Header().Set("Cache-Control", "no-cache")
+			}
 			return c.File(filePath)
 		}
 
 		// 文件不存在，返回index.html（SPA路由）
+		c.Response().Header().Set("Cache-Control", "no-cache")
 		return c.File(filepath.Join(staticDir, "index.html"))
 	})
 }

@@ -43,7 +43,7 @@ export default function TermsPage() {
               className="border-orange-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-slate-700/80 hover:border-orange-300 dark:hover:border-slate-600 transition-all duration-300"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              返回首页
+              Back to Home
             </Button>
           </Link>
         </div>
@@ -51,10 +51,10 @@ export default function TermsPage() {
         {/* 页面标题 */}
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 dark:from-orange-400 dark:via-amber-400 dark:to-yellow-400 bg-clip-text text-transparent">
-            服务条款
+            Terms of Service
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg">
-            最后更新时间：{new Date().toLocaleDateString("zh-CN")}
+            Last updated: {new Date().toLocaleDateString("en-US")}
           </p>
         </div>
 
@@ -62,89 +62,109 @@ export default function TermsPage() {
         <div className="prose prose-invert prose-lg max-w-none">
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              1. 服务条款的接受
+              1. Acceptance of Terms
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              通过访问和使用本网站及其服务，您同意遵守并受本服务条款的约束。如果您不同意这些条款，请不要使用我们的服务。
+              By accessing and using this website and its services, you agree to
+              comply with and be bound by these Terms of Service. If you do not
+              agree to these terms, please do not use our services.
             </p>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              2. 服务描述
+              2. Description of Service
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-              Go-React Template 是一个现代化的全栈开发模板，提供以下服务：
+              Go-React Template is a modern full-stack development template that
+              provides the following services:
             </p>
             <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 ml-4">
-              <li>用户注册和身份验证</li>
-              <li>数据管理和存储</li>
-              <li>API 接口服务</li>
-              <li>前端界面和用户体验</li>
+              <li>User registration and authentication</li>
+              <li>Data management and storage</li>
+              <li>API interface services</li>
+              <li>Frontend interface and user experience</li>
             </ul>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              3. 用户责任
+              3. User Responsibilities
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-              作为用户，您同意：
+              As a user, you agree to:
             </p>
             <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 ml-4">
-              <li>提供准确、完整的注册信息</li>
-              <li>保护您的账户安全和密码</li>
-              <li>不进行任何非法或有害的活动</li>
-              <li>遵守所有适用的法律法规</li>
-              <li>不干扰或破坏服务的正常运行</li>
+              <li>Provide accurate and complete registration information</li>
+              <li>Protect your account security and password</li>
+              <li>Not engage in any illegal or harmful activities</li>
+              <li>Comply with all applicable laws and regulations</li>
+              <li>
+                Not interfere with or disrupt the normal operation of the
+                service
+              </li>
             </ul>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              4. 知识产权
+              4. Intellectual Property
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              本网站及其内容（包括但不限于文本、图像、代码、设计）受版权法和其他知识产权法保护。未经明确授权，您不得复制、修改、分发或以其他方式使用这些内容。
+              This website and its content (including but not limited to text,
+              images, code, design) are protected by copyright and other
+              intellectual property laws. You may not copy, modify, distribute,
+              or otherwise use this content without express authorization.
             </p>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              5. 服务可用性
+              5. Service Availability
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              我们努力确保服务的持续可用性，但不保证服务不会中断。我们可能因维护、更新或其他原因暂时中断服务，并会尽力提前通知用户。
+              We strive to ensure continuous availability of the service but do
+              not guarantee that the service will be uninterrupted. We may
+              temporarily suspend the service for maintenance, updates, or other
+              reasons, and will try our best to notify users in advance.
             </p>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              6. 免责声明
+              6. Disclaimer
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              本服务按"现状"提供，我们不对服务的准确性、完整性或可靠性做出任何明示或暗示的保证。在法律允许的最大范围内，我们不承担任何直接、间接、偶然或后果性损害的责任。
+              This service is provided on an "as is" basis, and we make no
+              express or implied warranties regarding the accuracy,
+              completeness, or reliability of the service. To the fullest extent
+              permitted by law, we shall not be liable for any direct, indirect,
+              incidental, or consequential damages.
             </p>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 mb-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              7. 条款修改
+              7. Modification of Terms
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              我们保留随时修改这些服务条款的权利。重大变更将通过网站公告或电子邮件通知用户。继续使用服务即表示您接受修改后的条款。
+              We reserve the right to modify these Terms of Service at any time.
+              Significant changes will be notified to users via website
+              announcements or emails. Continued use of the service constitutes
+              your acceptance of the modified terms.
             </p>
           </div>
 
           <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-orange-200/50 dark:border-slate-700/50 rounded-lg p-8 shadow-lg shadow-orange-100/50 dark:shadow-slate-900/50">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-              8. 联系信息
+              8. Contact Information
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              如果您对这些服务条款有任何疑问，请联系我们：
+              If you have any questions about these Terms of Service, please
+              contact us:
             </p>
             <p className="text-gray-700 dark:text-gray-300 mt-4">
-              邮箱：y.bz@foxmail.com
+              Email: y.bz@foxmail.com
             </p>
           </div>
         </div>

@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
 import {
   ZoomIn,
   ZoomOut,
@@ -13,6 +12,7 @@ import {
   GripVertical,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import SEO from "@/components/SEO";
 
 // 工具类型
 type ToolType = "brush" | "lasso" | "eraser" | "hand";
@@ -508,266 +508,336 @@ export const WatermarkEditorPage: React.FC = () => {
   void resetZoom;
 
   return (
-    <div className="relative w-full h-full bg-gray-100 dark:bg-slate-900 overflow-hidden">
-      {/* 隐藏的文件输入 */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
+    <>
+      <SEO
+        title="Watermark Editor - Remove Watermarks from Images"
+        description="Professional watermark removal editor. Use brush tool to select and remove watermarks from your images with AI technology."
+        canonicalUrl="/tools/watermark-remover/editor"
+        noindex={true}
       />
+      <div
+        className="relative w-full h-full overflow-hidden"
+        style={{ backgroundColor: "var(--color-pixel-cream)" }}
+      >
+        {/* 隐藏的文件输入 */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
+        />
 
-      {/* 未上传图片时显示上传区域 */}
-      {!img && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="flex flex-col items-center justify-center w-96 h-64 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl bg-white dark:bg-slate-800 cursor-pointer hover:border-[#7b4aff] hover:bg-gray-50 dark:hover:bg-slate-700 transition-all group"
-          >
-            <div className="w-20 h-20 mb-4 rounded-full bg-[#7b4aff]/10 flex items-center justify-center group-hover:bg-[#7b4aff]/20 transition-colors">
-              <ImagePlus className="w-10 h-10 text-[#7b4aff]" />
-            </div>
-            <p className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              Click to Upload Image
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Support JPG, PNG, WebP formats
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* 画布区域 */}
-      {img && (
-        <div
-          ref={containerRef}
-          className="absolute inset-0 flex items-center justify-center overflow-hidden"
-          style={{ cursor: getCursor() }}
-        >
-          <div
-            style={{
-              transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
-              transformOrigin: "center center",
-              transition: isPanning ? "none" : "transform 0.1s ease-out",
-            }}
-          >
-            <div className="relative shadow-2xl rounded-lg overflow-hidden">
-              <canvas
-                ref={canvasRef}
-                style={{
-                  display: "block",
-                  maxWidth: "none",
-                }}
-              />
-              {/* Mask canvas */}
-              <canvas
-                ref={maskRef}
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  pointerEvents: "none",
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-              {/* Preview canvas */}
-              <canvas
-                ref={previewRef}
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  pointerEvents: "auto",
-                  width: "100%",
-                  height: "100%",
-                }}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onMouseMove={handleMouseMove}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 顶部工具栏 - New Photo 按钮 */}
-      {img && (
-        <div className="absolute top-4 left-4 z-10">
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            className="bg-[#7b4aff] hover:bg-[#6b3ae6] text-white shadow-lg"
-          >
-            <ImagePlus className="w-4 h-4 mr-2" />
-            New Photo
-          </Button>
-        </div>
-      )}
-
-      {/* 底部浮动工具栏 */}
-      {img && (
-        <div
-          ref={toolbarRef}
-          className="fixed z-10"
-          style={{
-            left: toolbarInitialized ? toolbarPosition.x : "50%",
-            top: toolbarInitialized ? toolbarPosition.y : "auto",
-            bottom: toolbarInitialized ? "auto" : 24,
-            transform: toolbarInitialized ? "none" : "translateX(-50%)",
-          }}
-        >
-          <div className="flex items-center gap-1 px-2 py-2 bg-white dark:bg-slate-800 rounded-full shadow-xl border border-gray-200 dark:border-slate-700">
-            {/* 拖拽手柄 */}
+        {/* 未上传图片时显示上传区域 - 像素风格 */}
+        {!img && (
+          <div className="absolute inset-0 flex items-center justify-center">
             <div
-              onMouseDown={handleToolbarDragStart}
-              className="flex items-center justify-center px-1 py-2 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
-              title="Drag to move toolbar"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex flex-col items-center justify-center w-96 h-64 pixel-card cursor-pointer hover:translate-x-1 hover:translate-y-1"
+              style={{ backgroundColor: "white" }}
             >
-              <GripVertical className="w-4 h-4" />
+              <div
+                className="w-20 h-20 mb-4 pixel-border-sm flex items-center justify-center"
+                style={{ backgroundColor: "var(--color-pixel-coral)" }}
+              >
+                <ImagePlus className="w-10 h-10 text-white" />
+              </div>
+              <p
+                className="text-lg font-black uppercase mb-2"
+                style={{ color: "var(--color-pixel-black)" }}
+              >
+                Click to Upload
+              </p>
+              <p className="text-sm font-medium" style={{ color: "#666" }}>
+                Support JPG, PNG, WebP formats
+              </p>
             </div>
-
-            {/* 分隔线 */}
-            <div className="w-px h-8 bg-gray-200 dark:bg-slate-600" />
-
-            {/* 工具选择 */}
-            <div className="flex items-center gap-1 px-2">
-              {tools.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => {
-                    setTool(t.id);
-                    if (t.id === "brush") setShowBrushPanel(!showBrushPanel);
-                    else setShowBrushPanel(false);
-                  }}
-                  className={`relative flex items-center gap-2 px-3 py-2 rounded-full transition-all ${
-                    tool === t.id
-                      ? "bg-[#7b4aff]/10 text-[#7b4aff] border border-[#7b4aff]"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-                  }`}
-                  title={t.label}
-                >
-                  <t.icon className="w-5 h-5" />
-                  {tool === t.id && t.id === "brush" && (
-                    <span className="text-sm font-medium">{t.label}</span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* 分隔线 */}
-            <div className="w-px h-8 bg-gray-200 dark:bg-slate-600 mx-2" />
-
-            {/* 清除选区 */}
-            <button
-              onClick={clearMask}
-              className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
-              title="Clear Selection"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
-
-            {/* 分隔线 */}
-            <div className="w-px h-8 bg-gray-200 dark:bg-slate-600 mx-2" />
-
-            {/* 缩放控制 */}
-            <button
-              onClick={zoomIn}
-              className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-5 h-5" />
-            </button>
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-300 min-w-[50px] text-center">
-              {Math.round(scale * 100)}%
-            </span>
-            <button
-              onClick={zoomOut}
-              className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-5 h-5" />
-            </button>
-
-            {/* 移动工具 */}
-            <button
-              onClick={() => setTool("hand")}
-              className={`p-2 rounded-full transition-colors ${
-                tool === "hand"
-                  ? "bg-[#7b4aff]/10 text-[#7b4aff]"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-              }`}
-              title="Pan"
-            >
-              <Hand className="w-5 h-5" />
-            </button>
-
-            {/* 分隔线 */}
-            <div className="w-px h-8 bg-gray-200 dark:bg-slate-600 mx-2" />
-
-            {/* Remove 按钮 */}
-            <Button
-              onClick={applyInpaint}
-              disabled={processing}
-              className="bg-[#7b4aff] hover:bg-[#6b3ae6] text-white px-6 rounded-full"
-            >
-              {processing ? "Processing..." : "Remove"}
-            </Button>
           </div>
+        )}
 
-          {/* 画笔大小面板 */}
-          {showBrushPanel && tool === "brush" && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-gray-200 dark:border-slate-700">
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                  Brush Size:
-                </span>
-                <Slider
-                  value={[brushSize]}
-                  onValueChange={(v) => setBrushSize(v[0])}
-                  min={2}
-                  max={50}
-                  step={1}
-                  className="w-40"
+        {/* 画布区域 */}
+        {img && (
+          <div
+            ref={containerRef}
+            className="absolute inset-0 flex items-center justify-center overflow-hidden"
+            style={{ cursor: getCursor() }}
+          >
+            <div
+              style={{
+                transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+                transformOrigin: "center center",
+                transition: isPanning ? "none" : "transform 0.1s ease-out",
+              }}
+            >
+              <div className="relative shadow-2xl rounded-lg overflow-hidden">
+                <canvas
+                  ref={canvasRef}
+                  style={{
+                    display: "block",
+                    maxWidth: "none",
+                  }}
                 />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 min-w-[32px] text-right">
-                  {brushSize}
-                </span>
+                {/* Mask canvas */}
+                <canvas
+                  ref={maskRef}
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    pointerEvents: "none",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+                {/* Preview canvas */}
+                <canvas
+                  ref={previewRef}
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    pointerEvents: "auto",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onMouseMove={handleMouseMove}
+                />
               </div>
             </div>
-          )}
-        </div>
-      )}
-
-      {/* 右下角下载按钮 */}
-      {img && (
-        <div className="absolute bottom-6 right-6 z-10">
-          <Button
-            onClick={downloadResult}
-            className="bg-[#7b4aff] hover:bg-[#6b3ae6] text-white px-8 py-3 rounded-full shadow-xl text-base font-medium"
-          >
-            <Download className="w-5 h-5 mr-2" />
-            Download
-          </Button>
-        </div>
-      )}
-
-      {/* Processing overlay */}
-      {showOverlay && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4">
-            <div className="w-16 h-16 border-4 border-[#7b4aff]/20 border-t-[#7b4aff] rounded-full animate-spin" />
-            <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
-              Removing watermark...
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Please wait a moment
-            </p>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* 顶部工具栏 - New Photo 按钮 - 像素风格 */}
+        {img && (
+          <div className="absolute top-4 left-4 z-10">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="pixel-btn-primary px-4 py-2 text-sm"
+            >
+              <ImagePlus className="w-4 h-4 mr-2" />
+              NEW PHOTO
+            </button>
+          </div>
+        )}
+
+        {/* 底部浮动工具栏 - 像素风格 */}
+        {img && (
+          <div
+            ref={toolbarRef}
+            className="fixed z-10"
+            style={{
+              left: toolbarInitialized ? toolbarPosition.x : "50%",
+              top: toolbarInitialized ? toolbarPosition.y : "auto",
+              bottom: toolbarInitialized ? "auto" : 24,
+              transform: toolbarInitialized ? "none" : "translateX(-50%)",
+            }}
+          >
+            <div
+              className="flex items-center gap-1 px-3 py-2 pixel-border"
+              style={{ backgroundColor: "white" }}
+            >
+              {/* 拖拽手柄 */}
+              <div
+                onMouseDown={handleToolbarDragStart}
+                className="flex items-center justify-center px-1 py-2 cursor-grab active:cursor-grabbing hover:bg-gray-100 transition-colors"
+                title="Drag to move toolbar"
+              >
+                <GripVertical
+                  className="w-4 h-4"
+                  style={{ color: "var(--color-pixel-black)" }}
+                />
+              </div>
+
+              {/* 分隔线 */}
+              <div
+                className="w-px h-8"
+                style={{ backgroundColor: "var(--color-pixel-black)" }}
+              />
+
+              {/* 工具选择 */}
+              <div className="flex items-center gap-1 px-2">
+                {tools.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      setTool(t.id);
+                      if (t.id === "brush") setShowBrushPanel(!showBrushPanel);
+                      else setShowBrushPanel(false);
+                    }}
+                    className={`relative flex items-center gap-2 px-3 py-2 transition-all pixel-border-sm ${
+                      tool === t.id
+                        ? "text-white"
+                        : "bg-white hover:bg-gray-100"
+                    }`}
+                    style={{
+                      backgroundColor:
+                        tool === t.id ? "var(--color-pixel-coral)" : undefined,
+                    }}
+                    title={t.label}
+                  >
+                    <t.icon className="w-5 h-5" />
+                    {tool === t.id && t.id === "brush" && (
+                      <span className="text-sm font-bold uppercase">
+                        {t.label}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* 分隔线 */}
+              <div
+                className="w-px h-8 mx-2"
+                style={{ backgroundColor: "var(--color-pixel-black)" }}
+              />
+
+              {/* 清除选区 */}
+              <button
+                onClick={clearMask}
+                className="p-2 pixel-border-sm hover:bg-gray-100 transition-colors"
+                style={{ backgroundColor: "white" }}
+                title="Clear Selection"
+              >
+                <RotateCcw className="w-5 h-5" />
+              </button>
+
+              {/* 分隔线 */}
+              <div
+                className="w-px h-8 mx-2"
+                style={{ backgroundColor: "var(--color-pixel-black)" }}
+              />
+
+              {/* 缩放控制 */}
+              <button
+                onClick={zoomIn}
+                className="p-2 pixel-border-sm hover:bg-gray-100 transition-colors"
+                style={{ backgroundColor: "white" }}
+                title="Zoom In"
+              >
+                <ZoomIn className="w-5 h-5" />
+              </button>
+              <span
+                className="text-sm font-bold min-w-[50px] text-center"
+                style={{ color: "var(--color-pixel-black)" }}
+              >
+                {Math.round(scale * 100)}%
+              </span>
+              <button
+                onClick={zoomOut}
+                className="p-2 pixel-border-sm hover:bg-gray-100 transition-colors"
+                style={{ backgroundColor: "white" }}
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-5 h-5" />
+              </button>
+
+              {/* 移动工具 */}
+              <button
+                onClick={() => setTool("hand")}
+                className={`p-2 pixel-border-sm transition-colors ${
+                  tool === "hand" ? "text-white" : "bg-white hover:bg-gray-100"
+                }`}
+                style={{
+                  backgroundColor:
+                    tool === "hand" ? "var(--color-pixel-teal)" : undefined,
+                }}
+                title="Pan"
+              >
+                <Hand className="w-5 h-5" />
+              </button>
+
+              {/* 分隔线 */}
+              <div
+                className="w-px h-8 mx-2"
+                style={{ backgroundColor: "var(--color-pixel-black)" }}
+              />
+
+              {/* Remove 按钮 - 像素风格 */}
+              <button
+                onClick={applyInpaint}
+                disabled={processing}
+                className="pixel-btn-primary px-6 py-2 text-sm"
+              >
+                {processing ? "PROCESSING..." : "REMOVE"}
+              </button>
+            </div>
+
+            {/* 画笔大小面板 - 像素风格 */}
+            {showBrushPanel && tool === "brush" && (
+              <div
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-3 pixel-border"
+                style={{ backgroundColor: "white" }}
+              >
+                <div className="flex items-center gap-4">
+                  <span
+                    className="text-sm font-bold uppercase"
+                    style={{ color: "var(--color-pixel-black)" }}
+                  >
+                    Brush Size:
+                  </span>
+                  <Slider
+                    value={[brushSize]}
+                    onValueChange={(v) => setBrushSize(v[0])}
+                    min={2}
+                    max={50}
+                    step={1}
+                    className="w-40"
+                  />
+                  <span
+                    className="text-sm font-bold min-w-[32px] text-right"
+                    style={{ color: "var(--color-pixel-coral)" }}
+                  >
+                    {brushSize}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 右下角下载按钮 - 像素风格 */}
+        {img && (
+          <div className="absolute bottom-6 right-6 z-10">
+            <button
+              onClick={downloadResult}
+              className="pixel-btn-mint px-8 py-3 text-base"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              DOWNLOAD
+            </button>
+          </div>
+        )}
+
+        {/* Processing overlay - 像素风格 */}
+        {showOverlay && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div
+              className="pixel-card p-8 flex flex-col items-center gap-4"
+              style={{ backgroundColor: "white" }}
+            >
+              <div
+                className="w-16 h-16 pixel-border flex items-center justify-center"
+                style={{ backgroundColor: "var(--color-pixel-coral)" }}
+              >
+                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+              </div>
+              <p
+                className="text-lg font-black uppercase"
+                style={{ color: "var(--color-pixel-black)" }}
+              >
+                Removing watermark...
+              </p>
+              <p className="text-sm font-medium" style={{ color: "#666" }}>
+                Please wait a moment
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

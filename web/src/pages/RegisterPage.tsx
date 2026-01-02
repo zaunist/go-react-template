@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { userApi, type RegisterRequest } from "@/api";
+import SEO from "@/components/SEO";
 
 declare global {
   interface Window {
@@ -128,144 +129,205 @@ export default function RegisterPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-[66px] flex items-center justify-center">
-      <div className="w-full max-w-md mx-4">
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#1e1e1e] mb-2">
-              Create Account
-            </h1>
-            <p className="text-[#666]">Sign up to get started</p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-[#1e1e1e] mb-2"
+    <>
+      <SEO
+        title="Sign Up"
+        description="Create a free MDZZ Toolbox account to save your projects and access all features."
+        canonicalUrl="/register"
+        noindex={true}
+      />
+      <div
+        className="min-h-screen pt-[66px] flex items-center justify-center"
+        style={{ backgroundColor: "var(--color-pixel-cream)" }}
+      >
+        <div className="w-full max-w-md mx-4">
+          <div className="pixel-card p-8" style={{ backgroundColor: "white" }}>
+            {/* Header - 像素风格 */}
+            <div className="text-center mb-8">
+              <div
+                className="inline-block pixel-border-sm px-4 py-2 mb-4"
+                style={{ backgroundColor: "var(--color-pixel-mint)" }}
               >
-                Username
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                placeholder="Enter your username"
-                value={formData.username}
-                onChange={handleInputChange}
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-[#1e1e1e] placeholder-gray-400 focus:outline-none focus:border-[#7b4aff] focus:ring-1 focus:ring-[#7b4aff] transition-colors"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-[#1e1e1e] mb-2"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-[#1e1e1e] placeholder-gray-400 focus:outline-none focus:border-[#7b4aff] focus:ring-1 focus:ring-[#7b4aff] transition-colors"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-[#1e1e1e] mb-2"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Create a password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-[#1e1e1e] placeholder-gray-400 focus:outline-none focus:border-[#7b4aff] focus:ring-1 focus:ring-[#7b4aff] transition-colors"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-[#1e1e1e] mb-2"
-              >
-                Confirm Password
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-[#1e1e1e] placeholder-gray-400 focus:outline-none focus:border-[#7b4aff] focus:ring-1 focus:ring-[#7b4aff] transition-colors"
-              />
-            </div>
-
-            {error && (
-              <div className="text-sm text-red-600 bg-red-50 border border-red-200 p-3 rounded-lg">
-                {error}
+                <span className="font-bold text-sm uppercase">
+                  ✨ New Here?
+                </span>
               </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 text-white font-semibold rounded-full transition-all hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                background:
-                  "linear-gradient(225deg, #f37e8d 0%, #e352f5 48%, #a3ccfb 100%)",
-              }}
-            >
-              {loading ? "Creating account..." : "Create Account"}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <h1
+                className="pixel-title text-3xl mb-2"
+                style={{ color: "var(--color-pixel-black)" }}
+              >
+                CREATE ACCOUNT
+              </h1>
+              <p className="text-sm" style={{ color: "#666" }}>
+                Sign up to get started
+              </p>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">
-                Or continue with
-              </span>
+
+            {/* Form - 像素风格 */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-bold uppercase mb-2"
+                  style={{ color: "var(--color-pixel-black)" }}
+                >
+                  Username
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 text-sm transition-all focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5"
+                  style={{
+                    backgroundColor: "var(--color-pixel-cream)",
+                    border: "3px solid var(--color-pixel-black)",
+                    boxShadow: "3px 3px 0px var(--color-pixel-black)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-bold uppercase mb-2"
+                  style={{ color: "var(--color-pixel-black)" }}
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 text-sm transition-all focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5"
+                  style={{
+                    backgroundColor: "var(--color-pixel-cream)",
+                    border: "3px solid var(--color-pixel-black)",
+                    boxShadow: "3px 3px 0px var(--color-pixel-black)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-bold uppercase mb-2"
+                  style={{ color: "var(--color-pixel-black)" }}
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Create a password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 text-sm transition-all focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5"
+                  style={{
+                    backgroundColor: "var(--color-pixel-cream)",
+                    border: "3px solid var(--color-pixel-black)",
+                    boxShadow: "3px 3px 0px var(--color-pixel-black)",
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-bold uppercase mb-2"
+                  style={{ color: "var(--color-pixel-black)" }}
+                >
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 text-sm transition-all focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5"
+                  style={{
+                    backgroundColor: "var(--color-pixel-cream)",
+                    border: "3px solid var(--color-pixel-black)",
+                    boxShadow: "3px 3px 0px var(--color-pixel-black)",
+                  }}
+                />
+              </div>
+
+              {error && (
+                <div
+                  className="text-sm font-bold p-3 pixel-border-sm"
+                  style={{
+                    backgroundColor: "var(--color-pixel-coral)",
+                    color: "white",
+                  }}
+                >
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 font-bold uppercase text-sm transition-all hover:translate-x-1 hover:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed pixel-border-sm"
+                style={{
+                  backgroundColor: "var(--color-pixel-teal)",
+                  color: "white",
+                }}
+              >
+                {loading ? "Creating account..." : "Create Account →"}
+              </button>
+            </form>
+
+            {/* Divider - 像素风格 */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div
+                  className="w-full"
+                  style={{ borderTop: "2px dashed var(--color-pixel-black)" }}
+                ></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span
+                  className="px-4 font-bold uppercase text-xs"
+                  style={{ backgroundColor: "white", color: "#666" }}
+                >
+                  Or continue with
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* Google Login */}
-          <div className="flex justify-center mb-6" ref={googleButtonRef} />
+            {/* Google Login */}
+            <div className="flex justify-center mb-6" ref={googleButtonRef} />
 
-          {/* Login Link */}
-          <div className="text-center text-sm">
-            <span className="text-[#666]">Already have an account? </span>
-            <Link
-              to="/login"
-              className="text-[#7b4aff] hover:text-[#6b3ae0] font-medium transition-colors"
-            >
-              Sign in
-            </Link>
+            {/* Login Link - 像素风格 */}
+            <div className="text-center text-sm">
+              <span style={{ color: "#666" }}>Already have an account? </span>
+              <Link
+                to="/login"
+                className="font-bold uppercase hover:underline transition-all"
+                style={{ color: "var(--color-pixel-coral)" }}
+              >
+                Sign in
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

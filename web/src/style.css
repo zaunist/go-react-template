@@ -39,6 +39,19 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Pixel Art Color Palette */
+  --color-pixel-cream: #fff5e6;
+  --color-pixel-coral: #ff6b6b;
+  --color-pixel-yellow: #ffd93d;
+  --color-pixel-mint: #a8e6cf;
+  --color-pixel-sky: #88d8f5;
+  --color-pixel-lavender: #c9b1ff;
+  --color-pixel-teal: #4ecdc4;
+  --color-pixel-pink: #ffb6c1;
+  --color-pixel-orange: #ffab76;
+  --color-pixel-black: #1a1a2e;
+  --color-pixel-dark: #16213e;
 }
 
 :root {
@@ -92,8 +105,834 @@
   }
   html, body {
     @apply bg-background text-foreground;
-    font-family: "Segoe UI", Helvetica, Arial, Tahoma, sans-serif;
   }
+}
+
+/* ========================================
+   PIXEL ART DESIGN SYSTEM
+   ======================================== */
+
+/* Pixel Font - 使用系统等宽字体模拟像素感 */
+@layer base {
+  .pixel-font {
+    font-family: "Press Start 2P", "Courier New", monospace;
+    letter-spacing: 0.05em;
+  }
+  
+  .pixel-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+}
+
+/* ========================================
+   Pixel Borders & Shadows
+   ======================================== */
+@layer components {
+  /* 基础像素边框 */
+  .pixel-border {
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 
+      3px 3px 0 0 var(--color-pixel-black),
+      inset -1px -1px 0 0 rgba(0,0,0,0.1);
+  }
+  
+  .pixel-border-sm {
+    border: 2px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-border-lg {
+    border: 4px solid var(--color-pixel-black);
+    box-shadow: 
+      4px 4px 0 0 var(--color-pixel-black),
+      inset -2px -2px 0 0 rgba(0,0,0,0.1);
+  }
+  
+  /* 像素边框悬停效果 */
+  .pixel-border-hover {
+    transition: all 0.1s ease-out;
+  }
+  
+  .pixel-border-hover:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-border-hover:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  /* 像素角装饰 */
+  .pixel-corners {
+    position: relative;
+  }
+  
+  .pixel-corners::before,
+  .pixel-corners::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--color-pixel-black);
+  }
+  
+  .pixel-corners::before {
+    top: -3px;
+    left: -3px;
+  }
+  
+  .pixel-corners::after {
+    top: -3px;
+    right: -3px;
+  }
+  
+  .pixel-corners-bottom::before,
+  .pixel-corners-bottom::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--color-pixel-black);
+  }
+  
+  .pixel-corners-bottom::before {
+    bottom: -3px;
+    left: -3px;
+  }
+  
+  .pixel-corners-bottom::after {
+    bottom: -3px;
+    right: -3px;
+  }
+}
+
+/* ========================================
+   Pixel Cards
+   ======================================== */
+@layer components {
+  .pixel-card {
+    @apply bg-white relative;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    transition: all 0.15s ease-out;
+  }
+  
+  .pixel-card:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-card:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+  
+  /* 带标签的卡片 */
+  .pixel-card-tagged {
+    background: white;
+    position: relative;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    transition: all 0.15s ease-out;
+    padding-top: 2rem;
+  }
+  
+  .pixel-card-tagged:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-card-tag {
+    position: absolute;
+    top: -12px;
+    left: 16px;
+    padding: 4px 12px;
+    background: var(--color-pixel-yellow);
+    border: 2px solid var(--color-pixel-black);
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+}
+
+/* ========================================
+   Pixel Buttons
+   ======================================== */
+@layer components {
+  .pixel-btn {
+    @apply inline-flex items-center justify-center gap-2 font-bold uppercase;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    padding: 12px 24px;
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .pixel-btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+  
+  .pixel-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    padding: 12px 24px;
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: var(--color-pixel-coral);
+    color: white;
+  }
+  
+  .pixel-btn-primary:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    padding: 12px 24px;
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+    background: var(--color-pixel-yellow);
+    color: var(--color-pixel-black);
+  }
+  
+  .pixel-btn-secondary:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-mint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    padding: 12px 24px;
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+    background: var(--color-pixel-mint);
+    color: var(--color-pixel-black);
+  }
+  
+  .pixel-btn-mint:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    padding: 12px 24px;
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+    background: white;
+    color: var(--color-pixel-black);
+  }
+  
+  .pixel-btn-outline:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-sm {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    border-width: 2px;
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-sm:hover {
+    box-shadow: 1px 1px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-lg {
+    @apply inline-flex items-center justify-center gap-2 font-black uppercase text-lg;
+    padding: 16px 32px;
+    border: 4px solid var(--color-pixel-black);
+    box-shadow: 6px 6px 0 0 var(--color-pixel-black);
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+  }
+  
+  .pixel-btn-lg:hover {
+    transform: translate(3px, 3px);
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-btn-lg:active {
+    transform: translate(6px, 6px);
+    box-shadow: none;
+  }
+  
+  /* 白边大按钮 - 用于深色背景 */
+  .pixel-btn-lg.bg-pixel-coral {
+    border-color: white;
+    box-shadow: 6px 6px 0 0 rgba(255,255,255,0.3);
+  }
+  
+  .pixel-btn-lg.bg-pixel-coral:hover {
+    box-shadow: 3px 3px 0 0 rgba(255,255,255,0.3);
+  }
+}
+
+/* ========================================
+   Pixel Tags & Badges
+   ======================================== */
+@layer components {
+  .pixel-tag {
+    @apply inline-flex items-center font-bold uppercase text-xs;
+    padding: 4px 10px;
+    border: 2px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-tag-new {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 2px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+    background: var(--color-pixel-coral);
+    color: white;
+    animation: pixel-blink 1s infinite;
+  }
+  
+  .pixel-tag-yellow {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 2px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+    background: var(--color-pixel-yellow);
+    color: var(--color-pixel-black);
+  }
+  
+  .pixel-tag-mint {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 2px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+    background: var(--color-pixel-mint);
+    color: var(--color-pixel-black);
+  }
+  
+  .pixel-tag-lavender {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 2px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+    background: var(--color-pixel-lavender);
+    color: var(--color-pixel-black);
+  }
+  
+  @keyframes pixel-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+}
+
+/* ========================================
+   Pixel Icons & Decorations
+   ======================================== */
+@layer components {
+  .pixel-icon-box {
+    @apply flex items-center justify-center;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-icon-box-sm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+    width: 40px;
+    height: 40px;
+  }
+  
+  .pixel-icon-box-md {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+    width: 56px;
+    height: 56px;
+  }
+  
+  .pixel-icon-box-lg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+    width: 72px;
+    height: 72px;
+  }
+  
+  /* 像素装饰点 */
+  .pixel-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-pixel-black);
+  }
+  
+  .pixel-dot-sm {
+    width: 6px;
+    height: 6px;
+    background: var(--color-pixel-black);
+  }
+  
+  /* 像素星星 */
+  .pixel-star {
+    @apply inline-block;
+    font-size: 1.5rem;
+    animation: pixel-spin 3s linear infinite;
+  }
+  
+  @keyframes pixel-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .pixel-star-static {
+    @apply inline-block;
+    font-size: 1.5rem;
+  }
+}
+
+/* ========================================
+   Pixel Inputs & Form Elements
+   ======================================== */
+@layer components {
+  .pixel-input {
+    @apply w-full px-4 py-3 font-medium;
+    background: white;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.1);
+    transition: all 0.15s ease-out;
+  }
+  
+  .pixel-input:focus {
+    outline: none;
+    box-shadow: 
+      inset 2px 2px 0 0 rgba(0,0,0,0.1),
+      0 0 0 3px var(--color-pixel-yellow);
+  }
+  
+  .pixel-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 40px;
+    font-weight: 500;
+    background: white;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: inset 2px 2px 0 0 rgba(0,0,0,0.1);
+    transition: all 0.15s ease-out;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a1a2e' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  
+  .pixel-select:focus {
+    outline: none;
+    box-shadow: 
+      inset 2px 2px 0 0 rgba(0,0,0,0.1),
+      0 0 0 3px var(--color-pixel-yellow);
+  }
+}
+
+/* ========================================
+   Pixel Backgrounds & Patterns
+   ======================================== */
+@layer utilities {
+  .pixel-bg-cream {
+    background-color: var(--color-pixel-cream);
+  }
+  
+  .pixel-bg-grid {
+    background-image: 
+      linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  
+  .pixel-bg-dots {
+    background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
+    background-size: 12px 12px;
+  }
+  
+  .pixel-bg-checker {
+    background-image: 
+      linear-gradient(45deg, rgba(0,0,0,0.03) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(0,0,0,0.03) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.03) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.03) 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  }
+  
+  /* 像素条纹装饰 */
+  .pixel-stripe {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      var(--color-pixel-yellow) 8px,
+      var(--color-pixel-yellow) 16px
+    );
+  }
+  
+  .pixel-stripe-coral {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      var(--color-pixel-coral) 8px,
+      var(--color-pixel-coral) 16px
+    );
+  }
+}
+
+/* ========================================
+   Pixel Dividers
+   ======================================== */
+@layer components {
+  .pixel-divider {
+    height: 4px;
+    background: var(--color-pixel-black);
+    position: relative;
+  }
+  
+  .pixel-divider-dashed {
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-pixel-black),
+      var(--color-pixel-black) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+  }
+  
+  .pixel-divider-decorated {
+    height: 8px;
+    background: var(--color-pixel-black);
+    position: relative;
+  }
+  
+  .pixel-divider-decorated::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      var(--color-pixel-yellow) 8px,
+      var(--color-pixel-yellow) 16px
+    );
+  }
+}
+
+/* ========================================
+   Pixel Speech Bubbles
+   ======================================== */
+@layer components {
+  .pixel-bubble {
+    @apply relative bg-white p-6;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+  }
+  
+  .pixel-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid var(--color-pixel-black);
+  }
+  
+  .pixel-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid white;
+    z-index: 1;
+  }
+}
+
+/* ========================================
+   Pixel Number Badge
+   ======================================== */
+@layer components {
+  .pixel-number {
+    @apply flex items-center justify-center font-black;
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 3px 3px 0 0 var(--color-pixel-black);
+    font-size: 1.25rem;
+  }
+}
+
+/* ========================================
+   Pixel Header Specific
+   ======================================== */
+@layer components {
+  .pixel-header {
+    @apply fixed top-0 left-0 right-0 z-50;
+    background: white;
+    border-bottom: 4px solid var(--color-pixel-black);
+    height: 70px;
+  }
+  
+  .pixel-nav-item {
+    @apply relative px-4 py-2 font-bold uppercase text-sm;
+    color: var(--color-pixel-black);
+    transition: all 0.1s ease-out;
+  }
+  
+  .pixel-nav-item:hover {
+    background: var(--color-pixel-yellow);
+  }
+  
+  .pixel-nav-dropdown {
+    @apply absolute top-full left-0 bg-white min-w-[220px];
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 4px 4px 0 0 var(--color-pixel-black);
+    margin-top: 0;
+  }
+  
+  .pixel-nav-dropdown-item {
+    @apply block px-4 py-3 font-medium text-sm;
+    color: var(--color-pixel-black);
+    border-bottom: 2px dashed rgba(0,0,0,0.1);
+    transition: all 0.1s ease-out;
+  }
+  
+  .pixel-nav-dropdown-item:last-child {
+    border-bottom: none;
+  }
+  
+  .pixel-nav-dropdown-item:hover {
+    background: var(--color-pixel-mint);
+    padding-left: 20px;
+  }
+  
+  .pixel-logo {
+    @apply flex items-center gap-3 font-black text-xl uppercase;
+    color: var(--color-pixel-black);
+  }
+  
+  .pixel-logo-icon {
+    @apply flex items-center justify-center;
+    width: 40px;
+    height: 40px;
+    background: var(--color-pixel-yellow);
+    border: 3px solid var(--color-pixel-black);
+    box-shadow: 2px 2px 0 0 var(--color-pixel-black);
+  }
+}
+
+/* ========================================
+   Pixel Footer Specific
+   ======================================== */
+@layer components {
+  .pixel-footer {
+    background: var(--color-pixel-black);
+    border-top: 4px solid var(--color-pixel-yellow);
+    position: relative;
+  }
+  
+  .pixel-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-pixel-yellow),
+      var(--color-pixel-yellow) 16px,
+      var(--color-pixel-coral) 16px,
+      var(--color-pixel-coral) 32px,
+      var(--color-pixel-mint) 32px,
+      var(--color-pixel-mint) 48px,
+      var(--color-pixel-lavender) 48px,
+      var(--color-pixel-lavender) 64px
+    );
+  }
+  
+  .pixel-footer-title {
+    @apply font-black uppercase text-base mb-4;
+    color: white;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .pixel-footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-pixel-yellow);
+  }
+  
+  .pixel-footer-link {
+    @apply block py-2 text-sm font-medium;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.1s ease-out;
+    position: relative;
+    padding-left: 16px;
+  }
+  
+  .pixel-footer-link::before {
+    content: '►';
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    color: var(--color-pixel-yellow);
+    transition: all 0.1s ease-out;
+  }
+  
+  .pixel-footer-link:hover {
+    color: white;
+    padding-left: 20px;
+  }
+  
+  .pixel-footer-link:hover::before {
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   Pixel Animations
+   ======================================== */
+@layer utilities {
+  .pixel-bounce {
+    animation: pixel-bounce 0.5s ease infinite alternate;
+  }
+  
+  @keyframes pixel-bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+  }
+  
+  .pixel-float {
+    animation: pixel-float 3s ease-in-out infinite;
+  }
+  
+  @keyframes pixel-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  
+  .pixel-shake {
+    animation: pixel-shake 0.5s ease-in-out infinite;
+  }
+  
+  @keyframes pixel-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+  }
+}
+
+/* ========================================
+   Color Utility Classes
+   ======================================== */
+@layer utilities {
+  .bg-pixel-coral { background-color: var(--color-pixel-coral); }
+  .bg-pixel-yellow { background-color: var(--color-pixel-yellow); }
+  .bg-pixel-mint { background-color: var(--color-pixel-mint); }
+  .bg-pixel-sky { background-color: var(--color-pixel-sky); }
+  .bg-pixel-lavender { background-color: var(--color-pixel-lavender); }
+  .bg-pixel-teal { background-color: var(--color-pixel-teal); }
+  .bg-pixel-pink { background-color: var(--color-pixel-pink); }
+  .bg-pixel-orange { background-color: var(--color-pixel-orange); }
+  .bg-pixel-black { background-color: var(--color-pixel-black); }
+  .bg-pixel-cream { background-color: var(--color-pixel-cream); }
+  
+  .text-pixel-coral { color: var(--color-pixel-coral); }
+  .text-pixel-yellow { color: var(--color-pixel-yellow); }
+  .text-pixel-mint { color: var(--color-pixel-mint); }
+  .text-pixel-sky { color: var(--color-pixel-sky); }
+  .text-pixel-lavender { color: var(--color-pixel-lavender); }
+  .text-pixel-teal { color: var(--color-pixel-teal); }
+  .text-pixel-black { color: var(--color-pixel-black); }
+  
+  .border-pixel-black { border-color: var(--color-pixel-black); }
 }
 
 /* MDZZ gradient button */
@@ -106,21 +945,22 @@
   transform: scale(1.02);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Pixel Style */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--color-pixel-cream);
+  border: 2px solid var(--color-pixel-black);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: var(--color-pixel-yellow);
+  border: 2px solid var(--color-pixel-black);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: var(--color-pixel-coral);
 }

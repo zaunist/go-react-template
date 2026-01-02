@@ -3,8 +3,10 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Layout, EditorLayout } from "../components/layout";
 import { useAuthStore } from "../store/authStore";
 import HomePage from "../pages/HomePage";
-import WatermarkRemoverPage from "../pages/WatermarkRemoverPage";
-import WatermarkEditorPage from "../pages/WatermarkEditorPage";
+import WatermarkRemoverPage from "../pages/tools/WatermarkRemoverPage";
+import WatermarkEditorPage from "../pages/tools/WatermarkEditorPage";
+import ImageConverterPage from "../pages/tools/ImageConverterPage";
+import ImageConverterEditorPage from "../pages/tools/ImageConverterEditorPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
@@ -61,6 +63,10 @@ export const router = createBrowserRouter([
         element: <WatermarkRemoverPage />,
       },
       {
+        path: "tools/image-converter",
+        element: <ImageConverterPage />,
+      },
+      {
         path: "dashboard",
         element: (
           <ProtectedRoute>
@@ -94,6 +100,10 @@ export const router = createBrowserRouter([
       {
         path: "tools/watermark-remover/editor",
         element: <WatermarkEditorPage />,
+      },
+      {
+        path: "tools/image-converter/editor",
+        element: <ImageConverterEditorPage />,
       },
     ],
   },

@@ -38,6 +38,11 @@ export const Header: React.FC = () => {
           path: "/tools/watermark-remover",
           external: false,
         },
+        {
+          label: "Image Converter",
+          path: "/tools/image-converter",
+          external: false,
+        },
       ],
     },
     {
@@ -59,22 +64,14 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 bg-white"
-      style={{ height: "66px", borderBottom: "1px solid #f0f0f0" }}
-    >
+    <header className="pixel-header">
       <div className="max-w-[1200px] mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
-          <div className="flex items-center gap-2">
-            <img src="/vite.svg" alt="MDZZ" className="w-8 h-8" />
-            <span
-              className="font-semibold text-lg hidden sm:block"
-              style={{ color: "#1e1e1e" }}
-            >
-              MDZZ
-            </span>
+        <Link to="/" className="pixel-logo">
+          <div className="pixel-logo-icon">
+            <span className="text-lg">🎮</span>
           </div>
+          <span className="hidden sm:block tracking-wider">MDZZ</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -89,17 +86,18 @@ export const Header: React.FC = () => {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <button
-                className="flex items-center gap-1 px-4 py-2 text-[#1e1e1e] text-base font-medium hover:text-[#7b4aff] transition-colors"
+                className="pixel-nav-item flex items-center gap-1"
                 aria-expanded={activeDropdown === item.label}
                 aria-haspopup="true"
               >
+                <span>★</span>
                 {item.label}
                 <ChevronDown className="w-4 h-4" aria-hidden="true" />
               </button>
 
               {/* Dropdown Menu */}
               {item.hasDropdown && activeDropdown === item.label && (
-                <div className="absolute top-full left-0 mt-0 bg-white rounded-lg shadow-lg border border-gray-100 py-2 min-w-[200px]">
+                <div className="pixel-nav-dropdown">
                   {item.children?.map((child, childIndex) =>
                     child.external ? (
                       <a
@@ -107,7 +105,7 @@ export const Header: React.FC = () => {
                         href={child.path}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block px-4 py-2 text-[#454545] text-sm hover:bg-gray-50 hover:text-[#7b4aff] transition-colors"
+                        className="pixel-nav-dropdown-item"
                       >
                         {child.label}
                       </a>
@@ -115,7 +113,7 @@ export const Header: React.FC = () => {
                       <Link
                         key={childIndex}
                         to={child.path}
-                        className="block px-4 py-2 text-[#454545] text-sm hover:bg-gray-50 hover:text-[#7b4aff] transition-colors"
+                        className="pixel-nav-dropdown-item"
                       >
                         {child.label}
                       </Link>
@@ -133,12 +131,12 @@ export const Header: React.FC = () => {
             <>
               {user ? (
                 <div className="hidden md:flex items-center gap-3">
-                  <span className="text-sm text-[#454545]">
+                  <span className="text-sm font-bold text-pixel-black">
                     {user.username}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
+                    className="pixel-btn-sm pixel-btn-outline text-xs"
                   >
                     Logout
                   </button>
@@ -146,7 +144,7 @@ export const Header: React.FC = () => {
               ) : (
                 <Link
                   to="/login"
-                  className="hidden md:block text-[#454545] text-base hover:text-[#7b4aff] transition-colors"
+                  className="hidden md:block pixel-btn-sm bg-pixel-yellow text-pixel-black"
                 >
                   Login
                 </Link>
@@ -157,15 +155,15 @@ export const Header: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-[#454545] hover:text-[#7b4aff] transition-colors"
+            className="md:hidden pixel-icon-box-sm bg-pixel-yellow"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6" aria-hidden="true" />
+              <X className="w-5 h-5 text-pixel-black" aria-hidden="true" />
             ) : (
-              <Menu className="w-6 h-6" aria-hidden="true" />
+              <Menu className="w-5 h-5 text-pixel-black" aria-hidden="true" />
             )}
           </button>
         </div>
@@ -175,16 +173,18 @@ export const Header: React.FC = () => {
       {isMobileMenuOpen && (
         <nav
           id="mobile-menu"
-          className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg"
+          className="md:hidden absolute top-full left-0 right-0 bg-white border-t-4 border-pixel-black"
+          style={{ boxShadow: "0 4px 0 0 var(--color-pixel-black)" }}
           aria-label="Mobile navigation"
         >
           <div className="px-4 py-4 space-y-2">
             {navItems.map((item, index) => (
               <div key={index}>
-                <div className="py-2 text-[#1e1e1e] text-base font-medium">
+                <div className="py-2 font-black uppercase text-sm text-pixel-black flex items-center gap-2">
+                  <span className="text-pixel-coral">►</span>
                   {item.label}
                 </div>
-                <div className="pl-4 space-y-1">
+                <div className="pl-6 space-y-1 border-l-4 border-pixel-yellow ml-2">
                   {item.children.map((child, childIndex) =>
                     child.external ? (
                       <a
@@ -192,7 +192,7 @@ export const Header: React.FC = () => {
                         href={child.path}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block py-1.5 text-[#454545] text-sm"
+                        className="block py-2 text-sm font-medium text-gray-700 hover:text-pixel-coral hover:pl-2 transition-all"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {child.label}
@@ -201,7 +201,7 @@ export const Header: React.FC = () => {
                       <Link
                         key={childIndex}
                         to={child.path}
-                        className="block py-1.5 text-[#454545] text-sm"
+                        className="block py-2 text-sm font-medium text-gray-700 hover:text-pixel-coral hover:pl-2 transition-all"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {child.label}
@@ -212,18 +212,18 @@ export const Header: React.FC = () => {
               </div>
             ))}
             {ENABLE_AUTH && (
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4 border-t-2 border-dashed border-gray-200">
                 {user ? (
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left py-2 text-[#454545] text-base"
+                    className="pixel-btn-secondary w-full text-sm"
                   >
                     Logout
                   </button>
                 ) : (
                   <Link
                     to="/login"
-                    className="block py-2 text-[#454545] text-base"
+                    className="pixel-btn-primary w-full text-sm text-center block"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Login

@@ -101,6 +101,11 @@ func (s *userService) Login(req *model.UserLoginRequest) (*LoginResponse, error)
 		return nil, errors.New("邮箱或密码错误")
 	}
 
+	// 检查用户是否被封禁
+	if user.IsBanned {
+		return nil, errors.New("账户已被封禁")
+	}
+
 	response := user.ToResponse()
 
 	return &LoginResponse{
@@ -192,6 +197,10 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 	// 检查是否已存在Google用户
 	user, err := s.userRepo.GetByGoogleID(googleID)
 	if err == nil {
+		// 检查用户是否被封禁
+		if user.IsBanned {
+			return nil, errors.New("账户已被封禁")
+		}
 		// 用户已存在，直接登录
 		response := user.ToResponse()
 		return &LoginResponse{

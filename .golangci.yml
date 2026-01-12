@@ -4,24 +4,14 @@
 run:
   # 超时时间
   timeout: 5m
-  # 要检查的目录
-  skip-dirs:
-    - web
-    - static
-    - vendor
-    - .git
-  # 要检查的文件
-  skip-files:
-    - ".*_test.go$"
   # Go 版本
   go: "1.24"
 
 # 输出配置
 output:
-  # 输出格式: colored-line-number|line-number|json|tab|checkstyle|code-climate
-  format: colored-line-number
-  # 打印检查的文件名
-  print-issued-files: true
+  # 输出格式
+  formats:
+    - format: colored-line-number
   # 打印 linter 名称
   print-linter-name: true
   # 使检查结果可重现
@@ -38,7 +28,7 @@ linters:
     - staticcheck   # 静态分析工具
     - typecheck     # 类型检查
     - unused        # 检查未使用的代码
-    
+
     # 额外启用的 linters
     - gofmt         # 检查代码格式
     - goimports     # 检查 import 格式
@@ -55,15 +45,6 @@ linters:
     - revive        # 快速、可配置、可扩展的 Go linter
     - whitespace    # 检查多余的空白字符
     - wsl           # 检查空行使用
-    
-  disable:
-    - deadcode      # 已弃用，使用 unused 替代
-    - varcheck      # 已弃用，使用 unused 替代
-    - structcheck   # 已弃用，使用 unused 替代
-    - scopelint     # 已弃用
-    - interfacer    # 已弃用
-    - maligned      # 已弃用
-    - golint        # 已弃用，使用 revive 替代
 
 # linters 设置
 linters-settings:
@@ -73,18 +54,22 @@ linters-settings:
     check-type-assertions: true
     # 检查空白标识符
     check-blank: true
-    # 忽略的函数调用
-    ignore: fmt:.*,io/ioutil:^Read.*
+    # 排除的函数
+    exclude-functions:
+      - fmt.Fprintf
+      - fmt.Fprintln
+      - fmt.Fprint
+      - io/ioutil.ReadFile
+      - io/ioutil.ReadAll
 
   # govet 设置
   govet:
-    # 检查影子变量
-    check-shadowing: true
     # 启用所有检查
     enable-all: true
     # 禁用特定检查
     disable:
       - fieldalignment  # 字段对齐检查可能过于严格
+      - shadow          # 影子变量检查
 
   # gocyclo 设置
   gocyclo:
@@ -115,8 +100,6 @@ linters-settings:
 
   # revive 设置
   revive:
-    # 最小置信度
-    min-confidence: 0.8
     # 规则配置
     rules:
       - name: blank-imports
@@ -181,30 +164,41 @@ linters-settings:
 issues:
   # 排除使用默认排除规则
   exclude-use-default: false
-  
+
+  # 排除的目录
+  exclude-dirs:
+    - web
+    - static
+    - vendor
+    - .git
+
+  # 排除的文件
+  exclude-files:
+    - ".*_test.go$"
+
   # 排除的规则
   exclude:
     # errcheck: Almost all programs ignore errors on these functions and in most cases it's ok
     - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv). is not checked
-    
+
     # govet: Common false positives
     - (possible misuse of unsafe.Pointer|should have signature)
-    
+
     # staticcheck: Developers tend to write in C-style with an explicit 'break' in a 'switch', so it's ok to ignore
     - ineffective break statement. Did you mean to break out of the outer loop
-    
+
     # gosec: Too many false-positives on 'unsafe' usage
     - Use of unsafe calls should be audited
-    
+
     # gosec: Too many false-positives for parametrized shell calls
     - Subprocess launch(ed with variable|ing should be audited)
-    
+
     # gosec: Duplicated errcheck checks
     - G104
-    
+
     # gocritic: Too many false-positives. Will be enabled gradually
     - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
-  
+
   # 排除的规则（按 linter）
   exclude-rules:
     # 排除测试文件的某些检查
@@ -215,7 +209,7 @@ issues:
         - dupl
         - gosec
         - goconst
-    
+
     # 排除 main.go 的某些检查
     - path: main\.go
       linters:
@@ -225,40 +219,38 @@ issues:
     - path: pkg/handler/.*\.go
       linters:
         - dupl
-    
+
     # 排除生成的文件
     - path: \.pb\.go
       linters:
         - gofmt
         - goimports
         - govet
-    
+
     # 排除特定的错误消息
     - text: "weak cryptographic primitive"
       linters:
         - gosec
-    
+
     # 排除 "exported .* should have comment" 错误
     - text: "exported .* should have comment.*or be unexported"
       linters:
         - revive
-        - golint
-    
+
     # 排除 "package comment should be of the form" 错误
     - text: "package comment should be of the form"
       linters:
         - revive
-        - golint
-  
+
   # 最大问题数量，0 表示无限制
   max-issues-per-linter: 0
-  
+
   # 最大相同问题数量，0 表示无限制
   max-same-issues: 0
-  
+
   # 显示只在新代码中的问题
   new: false
-  
+
   # 修复发现的问题
   fix: false
 

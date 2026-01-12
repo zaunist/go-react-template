@@ -1,7 +1,7 @@
 # Go + React 全栈项目 Makefile
 # 提供统一的项目管理命令
 
-.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run
+.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run postmortem-onboarding postmortem-check
 
 # 默认目标
 help: ## 显示帮助信息
@@ -147,3 +147,20 @@ check-tools: ## 检查开发工具是否安装
 # 完整的 CI 流程
 ci: install lint test build ## 运行完整的 CI 流程
 	@echo "✅ CI 流程完成"
+
+# Postmortem 相关命令
+postmortem-onboarding: ## 分析历史 fix commits 生成 postmortem
+	@echo "📋 运行 Postmortem Onboarding..."
+	@if [ -z "$$OPENAI_API_KEY" ]; then \
+		echo "❌ 请设置 OPENAI_API_KEY 环境变量"; \
+		exit 1; \
+	fi
+	./scripts/postmortem.sh onboarding
+
+postmortem-check: ## 检查当前变更是否触发已知问题
+	@echo "🔍 运行 Pre-release Postmortem 检查..."
+	@if [ -z "$$OPENAI_API_KEY" ]; then \
+		echo "❌ 请设置 OPENAI_API_KEY 环境变量"; \
+		exit 1; \
+	fi
+	./scripts/postmortem.sh pre-release origin/main HEAD

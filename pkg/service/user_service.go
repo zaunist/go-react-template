@@ -25,7 +25,7 @@ type UserService interface {
 	ChangePassword(userID string, req *model.UserChangePasswordRequest) error
 }
 
-// LoginResponse 登录响应结构
+// LoginResponse 登录响应结构.
 type LoginResponse struct {
 	User *model.UserResponse `json:"user"`
 }
@@ -186,9 +186,9 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 
 	// 从payload中提取用户信息
 	googleID := payload.Subject
-	email, _ := payload.Claims["email"].(string)
-	name, _ := payload.Claims["name"].(string)
-	picture, _ := payload.Claims["picture"].(string)
+	email, _ := payload.Claims["email"].(string)     //nolint:errcheck
+	name, _ := payload.Claims["name"].(string)       //nolint:errcheck
+	picture, _ := payload.Claims["picture"].(string) //nolint:errcheck
 
 	if email == "" {
 		return nil, errors.New("无法获取Google账户邮箱")
@@ -203,6 +203,7 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 		}
 		// 用户已存在，直接登录
 		response := user.ToResponse()
+
 		return &LoginResponse{
 			User: &response,
 		}, nil
@@ -227,6 +228,7 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 	// 确保用户名唯一
 	originalUsername := username
 	counter := 1
+
 	for {
 		if _, err := s.userRepo.GetByUsername(username); err != nil {
 			// 用户名不存在，可以使用
@@ -252,6 +254,7 @@ func (s *userService) GoogleLogin(req *model.GoogleLoginRequest) (*LoginResponse
 	}
 
 	response := newUser.ToResponse()
+
 	return &LoginResponse{
 		User: &response,
 	}, nil
@@ -271,7 +274,7 @@ func (s *userService) ChangePassword(userID string, req *model.UserChangePasswor
 	}
 
 	// 验证旧密码
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.OldPassword)); err != nil {
+	if errCompare := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.OldPassword)); errCompare != nil {
 		return errors.New("旧密码错误")
 	}
 
@@ -329,6 +332,7 @@ func (s *userService) UpdateProfile(userID string, req *model.UserUpdateProfileR
 		if _, err := s.userRepo.GetByUsername(req.Username); err == nil {
 			return nil, errors.New("用户名已被使用")
 		}
+
 		user.Username = req.Username
 	}
 
@@ -337,6 +341,7 @@ func (s *userService) UpdateProfile(userID string, req *model.UserUpdateProfileR
 		if _, err := s.userRepo.GetByEmail(req.Email); err == nil {
 			return nil, errors.New("邮箱已被注册")
 		}
+
 		user.Email = req.Email
 	}
 
@@ -351,6 +356,7 @@ func (s *userService) UpdateProfile(userID string, req *model.UserUpdateProfileR
 	}
 
 	response := user.ToResponse()
+
 	return &response, nil
 }
 

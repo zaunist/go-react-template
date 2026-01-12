@@ -10,7 +10,6 @@ import (
 
 // SetupRoutes 设置所有API路由.
 func SetupRoutes(e *echo.Echo, userHandler *handler.UserHandler) {
-
 	// API v1 路由组
 	api := e.Group("/api/v1")
 
@@ -21,7 +20,7 @@ func SetupRoutes(e *echo.Echo, userHandler *handler.UserHandler) {
 	setupProtectedRoutes(api, userHandler)
 }
 
-// setupPublicRoutes 设置公开路由（无需认证）
+// setupPublicRoutes 设置公开路由（无需认证）.
 func setupPublicRoutes(api *echo.Group, userHandler *handler.UserHandler) {
 	// 健康检查
 	api.GET("/health", func(c echo.Context) error {
@@ -43,7 +42,7 @@ func setupPublicRoutes(api *echo.Group, userHandler *handler.UserHandler) {
 	auth.POST("/google", userHandler.GoogleLogin) // Google第三方登录
 }
 
-// setupProtectedRoutes 设置受保护路由（需要认证）
+// setupProtectedRoutes 设置受保护路由（需要认证）.
 func setupProtectedRoutes(api *echo.Group, userHandler *handler.UserHandler) {
 	// 创建受保护的路由组，应用Session中间件
 	protected := api.Group("", middleware.Session())

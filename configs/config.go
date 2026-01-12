@@ -42,7 +42,7 @@ type SessionConfig struct {
 	ExpireHour int    `json:"expire_hour"` // 过期时间(小时)
 }
 
-// 全局配置实例.
+// AppConfig 全局配置实例.
 var AppConfig *Config
 
 // Init 初始化配置.

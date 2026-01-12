@@ -220,6 +220,11 @@ issues:
     - path: main\.go
       linters:
         - gocyclo
+
+    # 排除 handler 文件的重复代码检查（Login 和 GoogleLogin 结构相似是合理的）
+    - path: pkg/handler/.*\.go
+      linters:
+        - dupl
     
     # 排除生成的文件
     - path: \.pb\.go

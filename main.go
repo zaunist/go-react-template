@@ -44,7 +44,20 @@ func main() {
 	e := echo.New()
 
 	// 添加中间件
-	e.Use(middleware.Logger())
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:   true,
+		LogURI:      true,
+		LogError:    true,
+		HandleError: true,
+		LogValuesFunc: func(_ echo.Context, v middleware.RequestLoggerValues) error {
+			if v.Error == nil {
+				log.Printf("[%d] %s", v.Status, v.URI)
+			} else {
+				log.Printf("[%d] %s - %v", v.Status, v.URI, v.Error)
+			}
+			return nil
+		},
+	}))
 	e.Use(middleware.Recover())
 	// 启用 Gzip 压缩
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
@@ -97,6 +110,7 @@ func setupStaticFiles(e *echo.Echo) {
 		}
 		// 设置强缓存：1年，因为文件名包含哈希值
 		c.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+
 		return c.File(filePath)
 	})
 
@@ -132,11 +146,13 @@ func setupStaticFiles(e *echo.Echo) {
 			if filepath.Ext(filePath) == ".html" {
 				c.Response().Header().Set("Cache-Control", "no-cache")
 			}
+
 			return c.File(filePath)
 		}
 
 		// 文件不存在，返回index.html（SPA路由）
 		c.Response().Header().Set("Cache-Control", "no-cache")
+
 		return c.File(filepath.Join(staticDir, "index.html"))
 	})
 }

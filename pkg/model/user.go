@@ -26,7 +26,7 @@ type User struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-// LoginType 登录类型枚举
+// LoginType 登录类型枚举.
 type LoginType string
 
 const (
@@ -92,10 +92,11 @@ type UserUpdateProfileRequest struct {
 	Bio      string `json:"bio" validate:"omitempty,max=500"`
 }
 
-// BeforeCreate 在创建前生成UUID
-func (u *User) BeforeCreate(tx *gorm.DB) error {
+// BeforeCreate 在创建前生成UUID.
+func (u *User) BeforeCreate(_ *gorm.DB) error {
 	if u.ID == "" {
 		u.ID = uuid.New().String()
 	}
+
 	return nil
 }

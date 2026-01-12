@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { userApi, type RegisterRequest } from "@/api";
@@ -9,9 +9,21 @@ declare global {
     google?: {
       accounts: {
         id: {
-          initialize: (config: any) => void;
+          initialize: (config: {
+            client_id: string;
+            callback: (response: { credential: string }) => void;
+            auto_select: boolean;
+            cancel_on_tap_outside: boolean;
+          }) => void;
           prompt: () => void;
-          renderButton: (element: HTMLElement, config: any) => void;
+          renderButton: (element: HTMLElement, config: {
+            theme: string;
+            size: string;
+            type: string;
+            shape: string;
+            text: string;
+            logo_alignment: string;
+          }) => void;
         };
       };
     };
@@ -70,7 +82,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleLogin = async (credential: string) => {
+  const handleGoogleLogin = useCallback(async (credential: string) => {
     setLoading(true);
     setError("");
 
@@ -87,7 +99,7 @@ export default function RegisterPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [login, navigate]);
 
   useEffect(() => {
     const initializeGoogleSignIn = () => {
@@ -96,7 +108,7 @@ export default function RegisterPage() {
           client_id:
             import.meta.env.VITE_GOOGLE_CLIENT_ID ||
             "586271718950-aebomfd3uvj2uofs81nkvtiu4meaggmn.apps.googleusercontent.com",
-          callback: (response: any) => {
+          callback: (response: { credential: string }) => {
             handleGoogleLogin(response.credential);
           },
           auto_select: false,
@@ -126,7 +138,7 @@ export default function RegisterPage() {
     } else {
       initializeGoogleSignIn();
     }
-  }, []);
+  }, [handleGoogleLogin]);
 
   return (
     <>

@@ -77,7 +77,7 @@ func (h *UserHandler) Login(c echo.Context) error {
 		Username: loginResponse.User.Username,
 		Email:    loginResponse.User.Email,
 	}
-	
+
 	if err := sessionMiddleware.CreateSession(c, user); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"code":    1,
@@ -140,7 +140,7 @@ func (h *UserHandler) GoogleLogin(c echo.Context) error {
 		Username: loginResponse.User.Username,
 		Email:    loginResponse.User.Email,
 	}
-	
+
 	if err := sessionMiddleware.CreateSession(c, user); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"code":    1,

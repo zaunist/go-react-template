@@ -1,7 +1,7 @@
 # Go + React 全栈项目 Makefile
 # 提供统一的项目管理命令
 
-.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run postmortem-onboarding postmortem-check
+.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run postmortem-onboarding postmortem-check postmortem-accept postmortem-list
 
 # 默认目标
 help: ## 显示帮助信息
@@ -77,7 +77,7 @@ dev-go: ## 启动 Go 开发模式（热重载）
 		air; \
 	else \
 		echo "❌ air 未安装，使用普通模式启动"; \
-		echo "📦 安装 air: go install github.com/cosmtrek/air@latest"; \
+		echo "📦 安装 air: go install github.com/air-verse/air@v1.61.7"; \
 		echo "📦 或使用项目脚本: make install-tools"; \
 		make run; \
 	fi
@@ -122,9 +122,9 @@ docker-compose-down: ## 停止 docker-compose 服务
 install-tools: ## 安装开发工具
 	@echo "🔧 安装开发工具..."
 	@echo "📦 安装 golangci-lint..."
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
 	@echo "📦 安装 air (热重载)..."
-	go install github.com/cosmtrek/air@latest
+	go install github.com/air-verse/air@v1.61.7
 	@echo "✅ 开发工具安装完成"
 	@echo "🎉 可用命令:"
 	@echo "   - make dev-go     # 启动 Go 热重载开发"
@@ -164,3 +164,19 @@ postmortem-check: ## 检查当前变更是否触发已知问题
 		exit 1; \
 	fi
 	./scripts/postmortem.sh pre-release origin/main HEAD
+
+postmortem-accept: ## 接受一个风险 (用法: make postmortem-accept PM_ID="PM-xxx" REASON="原因")
+	@if [ -z "$(PM_ID)" ]; then \
+		echo "❌ 请提供 PM_ID 参数"; \
+		echo "用法: make postmortem-accept PM_ID=\"PM-20260113-001\" REASON=\"原因\""; \
+		exit 1; \
+	fi
+	@if [ -z "$(REASON)" ]; then \
+		echo "❌ 请提供 REASON 参数"; \
+		echo "用法: make postmortem-accept PM_ID=\"PM-20260113-001\" REASON=\"原因\""; \
+		exit 1; \
+	fi
+	./scripts/postmortem.sh accept-risk "$(PM_ID)" "$(REASON)" "$(EXPIRES)"
+
+postmortem-list: ## 列出所有已接受的风险
+	./scripts/postmortem.sh list-accepted

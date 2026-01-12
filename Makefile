@@ -1,7 +1,7 @@
 # Go + React 全栈项目 Makefile
 # 提供统一的项目管理命令
 
-.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run postmortem-onboarding postmortem-check
+.PHONY: help install lint lint-go lint-web build clean dev run docker-build docker-run postmortem-onboarding postmortem-check postmortem-accept postmortem-list
 
 # 默认目标
 help: ## 显示帮助信息
@@ -164,3 +164,19 @@ postmortem-check: ## 检查当前变更是否触发已知问题
 		exit 1; \
 	fi
 	./scripts/postmortem.sh pre-release origin/main HEAD
+
+postmortem-accept: ## 接受一个风险 (用法: make postmortem-accept PM_ID="PM-xxx" REASON="原因")
+	@if [ -z "$(PM_ID)" ]; then \
+		echo "❌ 请提供 PM_ID 参数"; \
+		echo "用法: make postmortem-accept PM_ID=\"PM-20260113-001\" REASON=\"原因\""; \
+		exit 1; \
+	fi
+	@if [ -z "$(REASON)" ]; then \
+		echo "❌ 请提供 REASON 参数"; \
+		echo "用法: make postmortem-accept PM_ID=\"PM-20260113-001\" REASON=\"原因\""; \
+		exit 1; \
+	fi
+	./scripts/postmortem.sh accept-risk "$(PM_ID)" "$(REASON)" "$(EXPIRES)"
+
+postmortem-list: ## 列出所有已接受的风险
+	./scripts/postmortem.sh list-accepted

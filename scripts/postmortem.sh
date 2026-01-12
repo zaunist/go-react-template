@@ -14,6 +14,7 @@ NC='\033[0m' # No Color
 # 配置
 POSTMORTEM_DIR="./postmortem"
 TEMPLATE_FILE="${POSTMORTEM_DIR}/TEMPLATE.md"
+ACCEPTED_RISKS_FILE="${POSTMORTEM_DIR}/accepted-risks.json"
 
 # 环境变量检查
 check_env() {
@@ -119,6 +120,45 @@ Patterns: $patterns
     done
 
     echo "$summaries"
+}
+
+# 获取已接受的风险列表
+get_accepted_risks() {
+    if [[ -f "$ACCEPTED_RISKS_FILE" ]]; then
+        local today
+        today=$(date +%Y-%m-%d)
+
+        # 读取并过滤未过期的已接受风险
+        jq -r --arg today "$today" '
+            .accepted // [] |
+            map(select(.expires_at == null or .expires_at >= $today)) |
+            if length > 0 then
+                "## 已接受的风险 (将被排除):\n" +
+                (map("- " + .postmortem_id + ": " + .reason) | join("\n"))
+            else
+                ""
+            end
+        ' "$ACCEPTED_RISKS_FILE" 2>/dev/null || echo ""
+    else
+        echo ""
+    fi
+}
+
+# 获取已接受风险的 ID 列表
+get_accepted_risk_ids() {
+    if [[ -f "$ACCEPTED_RISKS_FILE" ]]; then
+        local today
+        today=$(date +%Y-%m-%d)
+
+        jq -r --arg today "$today" '
+            .accepted // [] |
+            map(select(.expires_at == null or .expires_at >= $today)) |
+            map(.postmortem_id) |
+            join(",")
+        ' "$ACCEPTED_RISKS_FILE" 2>/dev/null || echo ""
+    else
+        echo ""
+    fi
 }
 
 # 模式1: Onboarding - 分析所有历史 fix commits
@@ -230,9 +270,28 @@ mode_pre_release() {
         exit 0
     fi
 
+    # 获取已接受的风险
+    local accepted_risks
+    accepted_risks=$(get_accepted_risks)
+    local accepted_risk_ids
+    accepted_risk_ids=$(get_accepted_risk_ids)
+
+    if [[ -n "$accepted_risk_ids" ]]; then
+        echo -e "${BLUE}Accepted risks (will be excluded): ${accepted_risk_ids}${NC}"
+    fi
+
     local system_prompt="你是一个代码审查专家，负责检查新代码是否可能重复历史上已修复的 bug。
 你需要对比新的代码变更和历史 Postmortem 记录，识别潜在的风险。
 输出 JSON 格式的分析结果。"
+
+    local accepted_risks_prompt=""
+    if [[ -n "$accepted_risks" ]]; then
+        accepted_risks_prompt="
+
+$accepted_risks
+
+重要：上述已接受的风险不应该被报告。如果检测到的问题属于已接受的风险列表，请将其从 issues 中排除。"
+    fi
 
     local user_prompt="请分析以下代码变更是否可能触发历史上已记录的问题。
 
@@ -244,6 +303,7 @@ $diff_content
 
 ## 历史 Postmortem 记录:
 $existing_postmortems
+$accepted_risks_prompt
 
 请输出 JSON 格式的分析结果:
 {
@@ -272,6 +332,19 @@ $existing_postmortems
 
     # 去除 markdown 代码块标记
     result=$(echo "$result" | sed 's/^```json//g' | sed 's/^```//g' | sed 's/```$//g' | tr -d '\r')
+
+    # 如果有已接受的风险，从结果中过滤掉
+    if [[ -n "$accepted_risk_ids" ]]; then
+        result=$(echo "$result" | jq --arg ids "$accepted_risk_ids" '
+            .issues = (.issues // [] | map(select(.postmortem_id as $id | ($ids | split(",") | index($id) | not)))) |
+            if (.issues | length) == 0 then
+                .risk_level = "none" |
+                .summary = (.summary // "") + " (所有检测到的风险已被标记为已接受)"
+            else
+                .
+            end
+        ' 2>/dev/null || echo "$result")
+    fi
 
     # 解析结果
     local risk_level
@@ -400,6 +473,127 @@ $(cat "$TEMPLATE_FILE")
     echo -e "\n${GREEN}=== Post-release Complete ===${NC}"
 }
 
+# 模式4: Accept Risk - 接受一个风险
+mode_accept_risk() {
+    local pm_id="${1:-}"
+    local reason="${2:-}"
+    local expires="${3:-}"
+
+    if [[ -z "$pm_id" ]]; then
+        echo -e "${RED}Error: Postmortem ID is required${NC}"
+        echo "Usage: $0 accept-risk <pm_id> <reason> [expires]"
+        exit 1
+    fi
+
+    if [[ -z "$reason" ]]; then
+        echo -e "${RED}Error: Reason is required${NC}"
+        echo "Usage: $0 accept-risk <pm_id> <reason> [expires]"
+        exit 1
+    fi
+
+    # 验证 PM ID 格式
+    if [[ ! "$pm_id" =~ ^PM-[0-9]{8}-[0-9]{3}$ ]]; then
+        echo -e "${RED}Error: Invalid Postmortem ID format. Expected: PM-YYYYMMDD-NNN${NC}"
+        exit 1
+    fi
+
+    # 验证 postmortem 文件存在
+    local pm_file="${POSTMORTEM_DIR}/${pm_id}.md"
+    if [[ ! -f "$pm_file" ]]; then
+        echo -e "${RED}Error: Postmortem file not found: $pm_file${NC}"
+        exit 1
+    fi
+
+    # 验证过期日期格式
+    if [[ -n "$expires" && ! "$expires" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+        echo -e "${RED}Error: Invalid expiration date format. Expected: YYYY-MM-DD${NC}"
+        exit 1
+    fi
+
+    # 获取当前用户
+    local accepted_by
+    accepted_by=$(git config user.name 2>/dev/null || echo "unknown")
+    local accepted_at
+    accepted_at=$(date +%Y-%m-%d)
+
+    # 确保 accepted-risks.json 存在
+    if [[ ! -f "$ACCEPTED_RISKS_FILE" ]]; then
+        echo '{"accepted": []}' > "$ACCEPTED_RISKS_FILE"
+    fi
+
+    # 检查是否已存在
+    local existing
+    existing=$(jq -r --arg id "$pm_id" '.accepted[] | select(.postmortem_id == $id) | .postmortem_id' "$ACCEPTED_RISKS_FILE" 2>/dev/null || echo "")
+    if [[ -n "$existing" ]]; then
+        echo -e "${YELLOW}Warning: Risk $pm_id is already accepted. Updating...${NC}"
+        # 删除旧记录
+        jq --arg id "$pm_id" '.accepted = [.accepted[] | select(.postmortem_id != $id)]' "$ACCEPTED_RISKS_FILE" > "${ACCEPTED_RISKS_FILE}.tmp"
+        mv "${ACCEPTED_RISKS_FILE}.tmp" "$ACCEPTED_RISKS_FILE"
+    fi
+
+    # 添加新记录
+    local new_entry
+    if [[ -n "$expires" ]]; then
+        new_entry=$(jq -n \
+            --arg pm_id "$pm_id" \
+            --arg reason "$reason" \
+            --arg accepted_by "$accepted_by" \
+            --arg accepted_at "$accepted_at" \
+            --arg expires_at "$expires" \
+            '{postmortem_id: $pm_id, reason: $reason, accepted_by: $accepted_by, accepted_at: $accepted_at, expires_at: $expires_at}')
+    else
+        new_entry=$(jq -n \
+            --arg pm_id "$pm_id" \
+            --arg reason "$reason" \
+            --arg accepted_by "$accepted_by" \
+            --arg accepted_at "$accepted_at" \
+            '{postmortem_id: $pm_id, reason: $reason, accepted_by: $accepted_by, accepted_at: $accepted_at}')
+    fi
+
+    jq --argjson entry "$new_entry" '.accepted += [$entry]' "$ACCEPTED_RISKS_FILE" > "${ACCEPTED_RISKS_FILE}.tmp"
+    mv "${ACCEPTED_RISKS_FILE}.tmp" "$ACCEPTED_RISKS_FILE"
+
+    echo -e "${GREEN}Risk accepted: $pm_id${NC}"
+    echo -e "  Reason: $reason"
+    echo -e "  Accepted by: $accepted_by"
+    echo -e "  Accepted at: $accepted_at"
+    if [[ -n "$expires" ]]; then
+        echo -e "  Expires at: $expires"
+    fi
+}
+
+# 模式5: List Accepted - 列出所有已接受的风险
+mode_list_accepted() {
+    echo -e "${BLUE}=== Accepted Risks ===${NC}"
+
+    if [[ ! -f "$ACCEPTED_RISKS_FILE" ]]; then
+        echo -e "${YELLOW}No accepted risks file found${NC}"
+        exit 0
+    fi
+
+    local count
+    count=$(jq '.accepted | length' "$ACCEPTED_RISKS_FILE" 2>/dev/null || echo "0")
+
+    if [[ "$count" == "0" ]]; then
+        echo -e "${YELLOW}No accepted risks${NC}"
+        exit 0
+    fi
+
+    local today
+    today=$(date +%Y-%m-%d)
+
+    echo -e "${GREEN}Found $count accepted risk(s):${NC}\n"
+
+    jq -r --arg today "$today" '.accepted[] |
+        "ID: \(.postmortem_id)" +
+        (if .expires_at != null and .expires_at < $today then " [EXPIRED]" else "" end) +
+        "\n  Reason: \(.reason)" +
+        "\n  Accepted by: \(.accepted_by) on \(.accepted_at)" +
+        (if .expires_at != null then "\n  Expires: \(.expires_at)" else "" end) +
+        "\n"
+    ' "$ACCEPTED_RISKS_FILE"
+}
+
 # 显示帮助
 show_help() {
     cat << EOF
@@ -413,6 +607,10 @@ Modes:
                           Default: origin/main...HEAD
   post-release [prev] [curr]  Generate postmortems for fix commits in release
                           If tags provided, analyzes commits between them
+  accept-risk <pm_id> <reason> [expires]
+                          Accept a risk to exclude from future checks
+                          expires: optional expiration date (YYYY-MM-DD)
+  list-accepted           List all accepted risks
 
 Environment Variables:
   OPENAI_API_KEY    (Required) API key for OpenAI-compatible service
@@ -423,6 +621,9 @@ Examples:
   $0 onboarding
   $0 pre-release origin/main HEAD
   $0 post-release v1.0.0 v1.1.0
+  $0 accept-risk PM-20260113-001 "This pattern is intentional in our codebase"
+  $0 accept-risk PM-20260113-002 "Temporary acceptance" 2026-06-01
+  $0 list-accepted
 EOF
 }
 
@@ -435,20 +636,27 @@ main() {
         exit 0
     fi
 
-    check_env
-
     # 确保 postmortem 目录存在
     mkdir -p "$POSTMORTEM_DIR"
 
     case "$mode" in
         onboarding)
+            check_env
             mode_onboarding
             ;;
         pre-release)
+            check_env
             mode_pre_release "${2:-origin/main}" "${3:-HEAD}"
             ;;
         post-release)
+            check_env
             mode_post_release "${2:-}" "${3:-}"
+            ;;
+        accept-risk)
+            mode_accept_risk "${2:-}" "${3:-}" "${4:-}"
+            ;;
+        list-accepted)
+            mode_list_accepted
             ;;
         *)
             echo -e "${RED}Unknown mode: $mode${NC}"

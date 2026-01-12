@@ -1,9 +1,9 @@
 name: Docker image build
 
 on:
-  push:
-    branches:
-      - 'main'
+  release:
+    types:
+      - published
 
 jobs:
   docker:
@@ -31,4 +31,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: zaunist/go-react-template:latest
+          tags: |
+            zaunist/go-react-template:latest
+            zaunist/go-react-template:${{ github.event.release.tag_name }}

@@ -1,0 +1,103 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          current_tag="${{ github.ref_name }}"
+          previous_tag=$(git tag --sort=-creatordate | grep -v "^${current_tag}$" | head -1 || echo "")
+          echo "previous_tag=$previous_tag" >> $GITHUB_OUTPUT
+
+      - name: Generate release title
+        id: title
+        run: |
+          # runc 风格的 release 标题集合
+          # 包含各种语言的名言、诗句、歌词、动漫台词
+          quotes=(
+            "路漫漫其修远兮，吾将上下而求索。"
+            "天行健，君子以自强不息。"
+            "不积跬步，无以至千里。"
+            "千里之行，始于足下。"
+            "知之为知之，不知为不知，是知也。"
+            "学而不思则罔，思而不学则殆。"
+            "三人行，必有我师焉。"
+            "己所不欲，勿施于人。"
+            "工欲善其事，必先利其器。"
+            "纸上得来终觉浅，绝知此事要躬行。"
+            "山重水复疑无路，柳暗花明又一村。"
+            "长风破浪会有时，直挂云帆济沧海。"
+            "会当凌绝顶，一览众山小。"
+            "落红不是无情物，化作春泥更护花。"
+            "海内存知己，天涯若比邻。"
+            "Take me to your heart, take me to your soul."
+            "Stars hide your fires, let me rest tonight."
+            "The only way to do great work is to love what you do."
+            "Stay hungry, stay foolish."
+            "Talk is cheap. Show me the code."
+            "Simplicity is the ultimate sophistication."
+            "First, solve the problem. Then, write the code."
+            "Code is like humor. When you have to explain it, it's bad."
+            "Any fool can write code that a computer can understand."
+            "その日、人類は思い出した。"
+            "私の役目は信じるかどうかではない。行うかどうかだ。"
+            "諦めたらそこで試合終了ですよ。"
+            "人は何かの犠牲なしに何も得ることはできない。"
+            "真実はいつもひとつ！"
+            "努力した者が全て報われるとは限らん。しかし、成功した者は皆すべからく努力しておる。"
+          )
+
+          # 使用 tag 名称的哈希值来选择一个固定的引语
+          tag="${{ github.ref_name }}"
+          hash=$(echo -n "$tag" | md5sum | cut -c1-8)
+          index=$((16#$hash % ${#quotes[@]}))
+          quote="${quotes[$index]}"
+
+          echo "quote=$quote" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          current_tag="${{ github.ref_name }}"
+          previous_tag="${{ steps.prev_tag.outputs.previous_tag }}"
+
+          echo "## What's Changed" > changelog.md
+          echo "" >> changelog.md
+
+          if [[ -n "$previous_tag" ]]; then
+            # 获取两个 tag 之间的 commit
+            git log --pretty=format:"* %s (%h)" "${previous_tag}..${current_tag}" >> changelog.md
+          else
+            # 如果没有之前的 tag，获取所有 commit
+            git log --pretty=format:"* %s (%h)" >> changelog.md
+          fi
+
+          echo "" >> changelog.md
+          echo "" >> changelog.md
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${previous_tag}...${current_tag}" >> changelog.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "${{ github.ref_name }} -- \"${{ steps.title.outputs.quote }}\""
+          body_path: changelog.md
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

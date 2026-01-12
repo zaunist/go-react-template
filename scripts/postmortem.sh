@@ -270,6 +270,9 @@ $existing_postmortems
         exit 1
     fi
 
+    # 去除 markdown 代码块标记
+    result=$(echo "$result" | sed 's/^```json//g' | sed 's/^```//g' | sed 's/```$//g' | tr -d '\r')
+
     # 解析结果
     local risk_level
     risk_level=$(echo "$result" | jq -r '.risk_level // "unknown"' 2>/dev/null || echo "unknown")

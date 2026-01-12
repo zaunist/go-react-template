@@ -50,9 +50,9 @@ export const WatermarkEditorPage: React.FC = () => {
   const [toolbarDragStart, setToolbarDragStart] = useState({ x: 0, y: 0 });
   const [toolbarInitialized, setToolbarInitialized] = useState(false);
 
-  // 初始化工具栏位置（居中底部）
+  // 初始化工具栏位置（居中底部）- 当 img 变化时重置
   useEffect(() => {
-    if (img && !toolbarInitialized && toolbarRef.current) {
+    if (img && toolbarRef.current) {
       const toolbarWidth = toolbarRef.current.offsetWidth;
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
@@ -61,12 +61,7 @@ export const WatermarkEditorPage: React.FC = () => {
         y: windowHeight - 100,
       });
       setToolbarInitialized(true);
-    }
-  }, [img, toolbarInitialized]);
-
-  // 重置工具栏初始化状态
-  useEffect(() => {
-    if (!img) {
+    } else if (!img) {
       setToolbarInitialized(false);
     }
   }, [img]);

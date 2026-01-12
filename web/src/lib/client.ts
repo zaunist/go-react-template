@@ -6,7 +6,7 @@ import type { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 // 统一的API响应格式
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   code: number;
   data: T;
   message: string;
@@ -49,7 +49,7 @@ client.interceptors.response.use(
 
       switch (status) {
         case 400:
-          message = (data as any)?.message || "请求参数错误";
+          message = (data as { message?: string })?.message || "请求参数错误";
           break;
         case 401:
           message = "未授权，请重新登录";
@@ -69,7 +69,7 @@ client.interceptors.response.use(
           message = "服务器内部错误";
           break;
         default:
-          message = (data as any)?.message || `请求失败 (${status})`;
+          message = (data as { message?: string })?.message || `请求失败 (${status})`;
       }
     } else if (error.request) {
       // 请求已发出但没有收到响应
